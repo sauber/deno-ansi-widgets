@@ -2,12 +2,8 @@
 export abstract class Block {
   public abstract get width(): number;
   public abstract get height(): number;
-  public get canSetHeight(): boolean {
-    return true;
-  }
-  public get canSetWidth(): boolean {
-    return true;
-  }
+  public canSetHeight = true;
+  public canSetWidth = true;
   public abstract setWidth(width: number): Block;
   public abstract setHeight(height: number): Block;
 

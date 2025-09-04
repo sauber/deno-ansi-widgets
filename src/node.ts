@@ -3,8 +3,12 @@ import { type Elements, stretch } from "./stretch.ts";
 
 /** Handle multiple blocks */
 export abstract class Node extends Block {
+  // override canSetWidth: boolean;
+  // override canSetHeight: boolean;
   constructor(protected readonly blocks: Blocks) {
     super();
+    this.canSetWidth = this.blocks.some((b) => b.canSetWidth);
+    this.canSetHeight = this.blocks.some((b) => b.canSetHeight);
   }
 
   /** Create derived class with new set of blocks */
@@ -23,14 +27,14 @@ export abstract class Node extends Block {
   }
 
   /** Scaling is possible if at least one child can scale */
-  override get canSetWidth(): boolean {
-    return this.blocks.some((b) => b.canSetWidth);
-  }
+  // override get canSetWidth(): boolean {
+  //   return this.blocks.some((b) => b.canSetWidth);
+  // }
 
-  /** Scaling is possible if at least one child can scale */
-  override get canSetHeight(): boolean {
-    return this.blocks.some((b) => b.canSetHeight);
-  }
+  // /** Scaling is possible if at least one child can scale */
+  // override get canSetHeight(): boolean {
+  //   return this.blocks.some((b) => b.canSetHeight);
+  // }
 
   /** New total width of all block */
   public setWidth(width: number): this {

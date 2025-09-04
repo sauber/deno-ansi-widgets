@@ -6,6 +6,7 @@ import { Block } from "./block.ts";
 export class Line extends Block {
   public width: number;
   public lines: Array<string>;
+  override canSetWidth = false;
 
   /** Height of line (always 1) */
   public height = 1;
@@ -61,9 +62,9 @@ export class Line extends Block {
     return Line.blank(width, this.fill).left(this.line);
   }
 
-  public override get canSetWidth(): boolean {
-    return false;
-  }
+  // public override get canSetWidth(): boolean {
+  //   return false;
+  // }
 
   /** Cannot set height */
   public setHeight(height: number): Line {
