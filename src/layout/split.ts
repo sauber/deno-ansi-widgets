@@ -27,7 +27,7 @@ export class Split extends Node {
     const lines: string[] = Array(lineCount).fill("");
     for (let i = 0; i < lineCount; i++) {
       for (let j = 0; j < this.blocks.length; j++) {
-        lines[i] += grid[j][i];
+        lines[i] += grid[j][i] || " ".repeat(this.blocks[j].width);
       }
     }
     return lines;

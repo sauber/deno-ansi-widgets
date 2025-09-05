@@ -3,7 +3,7 @@ import { frame } from "../widgets/frame.ts";
 
 /** Bot a frame around a Block */
 export class Frame extends Block {
-  constructor(private readonly block: Block, private title: string) {
+  constructor(private readonly block: Block, private title: string = "") {
     super();
   }
 
@@ -13,7 +13,7 @@ export class Frame extends Block {
 
   /** Width of the frame */
   public override get width(): number {
-    return this.block.width + 2;
+    return Math.max(this.title.length, this.block.width) + 2;
   }
 
   /** Height of the frame */
