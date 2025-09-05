@@ -3,7 +3,6 @@
 import { assertEquals } from "https://deno.land/std@0.103.0/testing/asserts.ts";
 import { Stack } from "./stack.ts";
 import { Box } from "./box.ts";
-import { Line } from "./line.ts";
 
 Deno.test("Stack can be created with no children", () => {
   const stack = new Stack([]);
@@ -21,10 +20,10 @@ Deno.test("Stack can be created with children", () => {
 
 Deno.test("Stack renders children vertically", () => {
   const stack = new Stack([
-    new Line("Line 1"),
-    new Line("Line 2"),
+    new Box(1, 1, "x"),
+    new Box(2, 2, "o"),
   ]);
-  const expected = "Line 1\nLine 2";
+  const expected = "xx\noo\noo";
   assertEquals(stack.toString(), expected);
 });
 

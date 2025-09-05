@@ -1,7 +1,7 @@
 import type { Blocks } from "./block.ts";
 import { Node } from "./node.ts";
 
-export class Adjacent extends Node {
+export class Split extends Node {
   // Same height of each block
   private readonly commonHeight: number;
 
@@ -21,20 +21,6 @@ export class Adjacent extends Node {
   public override setHeight<Adjacent>(height: number): this {
     return this.create(this.blocks.map((b) => b.setHeight(height)));
   }
-
-  /** New total height of all block */
-  // public setWidth(width: number): Adjacent {
-  //   const current: Elements = this.blocks.map((
-  //     b,
-  //   ) => [b.width, b.canSetWidth]);
-  //   const target: Elements = stretch(current, width);
-
-  //   const stretched: Blocks = this.blocks.map((b, i) =>
-  //     b.setWidth(target[i][0])
-  //   );
-
-  //   return new Adjacent(stretched);
-  // }
 
   /** Combine lines at each from all elements */
   public get lines(): string[] {
