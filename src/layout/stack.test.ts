@@ -1,6 +1,4 @@
-// Test cases for stack.ts
-
-import { assertEquals } from "https://deno.land/std@0.103.0/testing/asserts.ts";
+import { assertEquals } from "@std/assert";
 import { Stack } from "./stack.ts";
 import { Box } from "./box.ts";
 
@@ -35,8 +33,8 @@ Deno.test("Stretch total height of children", () => {
   assertEquals(stack.height, 3);
   assertEquals(stack.width, 2);
 
-  const stretched = stack.setHeight(5);
-  assertEquals(stretched.height, 5);
-  assertEquals(stretched.width, 2);
-  assertEquals(stretched.toString(), "xx\nxx\noo\noo\noo")
+  const stretched: number = stack.setHeight(5);
+  assertEquals(stretched, 5);
+  assertEquals(stack.width, 2);
+  assertEquals(stack.toString(), "xx\nxx\noo\noo\noo");
 });

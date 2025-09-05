@@ -3,27 +3,21 @@ import { Block } from "./block.ts";
 /** Rows of lines of spaces with same width */
 export class Box extends Block {
   constructor(
-    public readonly width: number,
-    public readonly height: number,
+    public width: number,
+    public height: number,
     private readonly fill: string = " ",
   ) {
     super();
   }
 
-  /** Create new box with different width and height */
-  public setSize(width: number, height: number): Box {
-    if (width == this.width && height == this.height) return this;
-    return new Box(width, height, this.fill);
-  }
-
   /** Create new box with different width */
-  public setWidth(width: number): Box {
-    return this.setSize(width, this.height);
+  public setWidth(width: number): number {
+    return this.width = width;
   }
 
   /** Create new box with different height */
-  public setHeight(height: number): Box {
-    return this.setSize(this.width, height);
+  public setHeight(height: number): number {
+    return this.height = height;
   }
 
   /** Render box as joined lines */

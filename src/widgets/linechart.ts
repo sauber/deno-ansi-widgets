@@ -1,4 +1,4 @@
-import { scale } from "./scale.ts";
+import { scale } from "../utils/scale.ts";
 
 /** Create a terminal printable line chart from an array of numbers */
 export function linechart(

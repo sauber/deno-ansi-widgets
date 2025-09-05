@@ -2,27 +2,25 @@ import type { Blocks } from "./block.ts";
 import { Node } from "./node.ts";
 
 export class Split extends Node {
-  // Same height of each block
-  private readonly commonHeight: number;
-
   constructor(blocks: Blocks) {
-    const commonHeight = Math.max(0, ...blocks.map((b) => b.height));
-    const adjusted: Blocks = blocks.map((b) => b.setHeight(commonHeight));
-    super(adjusted);
-    this.commonHeight = commonHeight;
+    super(blocks);
+    // Adjust height of all blocks to the block with maximum height
+    const commonHeight = this.height;
+    this.setHeight(commonHeight);
   }
 
-  /** Height of each block */
+  /** Maximum height of all blocks */
   public override get height(): number {
-    return this.commonHeight;
+    return Math.max(0, ...this.blocks.map((b) => b.height));
   }
 
   /** New height of each block */
-  public override setHeight<Adjacent>(height: number): this {
-    return this.create(this.blocks.map((b) => b.setHeight(height)));
+  public override setHeight(height: number): number {
+    this.blocks.forEach((b) => b.setHeight(height));
+    return this.height;
   }
 
-  /** Combine lines at each from all elements */
+  /** Combine lines row by row from all elements */
   public get lines(): string[] {
     const grid = this.blocks.map((b) => b.lines);
     const lineCount = this.height;

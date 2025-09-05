@@ -3,8 +3,6 @@ import { type Elements, stretch } from "./stretch.ts";
 
 /** Handle multiple blocks */
 export abstract class Node extends Block {
-  // override canSetWidth: boolean;
-  // override canSetHeight: boolean;
   constructor(protected readonly blocks: Blocks) {
     super();
     this.canSetWidth = this.blocks.some((b) => b.canSetWidth);
@@ -26,43 +24,29 @@ export abstract class Node extends Block {
     return this.blocks.reduce((a, b) => a + b.height, 0);
   }
 
-  /** Scaling is possible if at least one child can scale */
-  // override get canSetWidth(): boolean {
-  //   return this.blocks.some((b) => b.canSetWidth);
-  // }
-
-  // /** Scaling is possible if at least one child can scale */
-  // override get canSetHeight(): boolean {
-  //   return this.blocks.some((b) => b.canSetHeight);
-  // }
-
   /** New total width of all block */
-  public setWidth(width: number): this {
+  public setWidth(width: number): number {
     const current: Elements = this.blocks.map((
       b,
     ) => [b.width, b.canSetWidth]);
     const target: Elements = stretch(current, width);
 
-    const stretched: Blocks = this.blocks.map((b, i) =>
-      b.setWidth(target[i][0])
-    );
+    // Set each block to new width
+    this.blocks.forEach((b, i) => b.setWidth(target[i][0]));
 
-    return this.create(stretched);
+    // Calculate new total width
+    return this.width;
   }
 
-
-    /** New total height of all block */
-  public setHeight(height: number): this {
+  /** New total height of all block */
+  public setHeight(height: number): number {
     const current: Elements = this.blocks.map((
       b,
     ) => [b.height, b.canSetHeight]);
     const target: Elements = stretch(current, height);
 
-    const stretched: Blocks = this.blocks.map((b, i) =>
-      b.setHeight(target[i][0])
-    );
+    this.blocks.forEach((b, i) => b.setHeight(target[i][0]));
 
-    return this.create(stretched);
+    return this.height;
   }
-
 }
