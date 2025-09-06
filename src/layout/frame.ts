@@ -5,10 +5,19 @@ import { frame } from "../widgets/frame.ts";
 export class Frame extends Block {
   constructor(private readonly block: Block, private title: string = "") {
     super();
+    this.expandToTitle();
+  }
+
+  /** If title is wider than content, expand content to match */
+  private expandToTitle(): void {
+    if (this.title.length > this.block.width) {
+      this.block.setWidth(this.title.length);
+    }
   }
 
   public override update(title: string): void {
     this.title = title;
+    this.expandToTitle();
   }
 
   /** Width of the frame */

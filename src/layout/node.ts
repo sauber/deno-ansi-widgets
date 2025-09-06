@@ -30,9 +30,14 @@ export abstract class Node extends Block {
       b,
     ) => [b.width, b.canSetWidth]);
     const target: Elements = stretch(current, width);
+    // console.log(current, target);
 
     // Set each block to new width
-    this.blocks.forEach((b, i) => b.setWidth(target[i][0]));
+    this.blocks.forEach((b, i) => {
+      if (current[i][1] && target[i][0] != current[i][0]) {
+        b.setWidth(target[i][0]);
+      }
+    });
 
     // Calculate new total width
     return this.width;
@@ -45,7 +50,11 @@ export abstract class Node extends Block {
     ) => [b.height, b.canSetHeight]);
     const target: Elements = stretch(current, height);
 
-    this.blocks.forEach((b, i) => b.setHeight(target[i][0]));
+    this.blocks.forEach((b, i) => {
+      if (current[i][1] && target[i][0] != current[i][0]) {
+        b.setHeight(target[i][0]);
+      }
+    });
 
     return this.height;
   }

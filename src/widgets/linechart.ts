@@ -6,6 +6,17 @@ export function linechart(
   height: number,
   width?: number,
 ): string {
+  // Empty chart
+  if (data.length === 0) return "";
+
+  // Extend single data point as a line
+  if (data.length === 1) {
+    const label = String(data[0]);
+    return `${label}├${"─".repeat(width ? width - label.length - 1 : 0)}`;
+  }
+
+  if (height < 2) throw new Error("Height must be at least 2");
+
   // y axis numeric labels
   const min = Math.min(...data);
   const max = Math.max(...data);
