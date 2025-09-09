@@ -1,10 +1,15 @@
 import { Block } from "./block.ts";
 import { frame } from "../widgets/frame.ts";
+import { fit } from "../utils/fit.ts";
+import { Fit } from "./fit.ts";
 
 /** Bot a frame around a Block */
 export class Frame extends Block {
-  constructor(private readonly block: Block, private title: string = "") {
+  private readonly block: Block;
+
+  constructor(block: Block, private title: string = "") {
     super();
+    this.block = new Fit(block);
     this.expandToTitle();
   }
 
@@ -22,8 +27,6 @@ export class Frame extends Block {
 
   /** Width of the frame */
   public override get width(): number {
-    const width = Math.max(this.title.length, this.block.width) + 2;
-    // console.log(this.title, "frame width", width);
     return Math.max(this.title.length, this.block.width) + 2;
   }
 
