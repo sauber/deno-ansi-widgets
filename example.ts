@@ -47,7 +47,7 @@ const dashboard = new Frame(
         ]),
         "🖼️",
       ),
-      new Frame(new Box(2, 2, "."), "Box 2x2"),
+      new Frame(new Box(2, 2, "♬"), "Box 2x2"),
       new Frame(chart, "Line Chart"),
     ]),
     new Split([
@@ -64,10 +64,10 @@ const dashboard = new Frame(
 console.log(dashboard.toString());
 
 // Update values in widgets
-// title.update("Updated Deno ANSI Widgets");
-// footer.update("Updated Footer");
-// chart.update([2, 4, 3, 6, 5, 7, 6, 8, 7, 9]);
+title.update("Updated Deno ANSI Widgets");
+footer.update("Updated Footer");
+chart.update([2, 4, 3, 6, 5, 7, 6, 8, 7, 9]);
 
-// // Render updated dashboard, overwrite previous output
-// const cursorUp = `\u001b[${dashboard.height}A`; // Move cursor up
-// console.log(cursorUp + dashboard.toString());
+// Render updated dashboard, overwrite previous output
+const cursorUp = `\u001b[${dashboard.height}A`; // Move cursor up
+console.log(cursorUp + dashboard.toString());
