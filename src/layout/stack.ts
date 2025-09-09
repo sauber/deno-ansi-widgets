@@ -25,7 +25,7 @@ export class Stack extends Group {
   public get lines(): string[] {
     // return this.blocks.flatMap((b) => b.lines);
     const lines = this.blocks.map((b) => b.lines);
-    console.log("stack lines", lines);
+    // console.log("stack lines", lines);
     return lines.flat();
   }
 }

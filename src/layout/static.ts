@@ -21,7 +21,7 @@ export class Static extends Block {
     this.width = width ||
       Math.max(...split.map((l) => ansiLength(l)));
     this.height = height || split.length;
-    console.log("static width", this.width, "height", this.height);
+    // console.log("static width", this.width, "height", this.height);
     this.lines = split;
   }
 

@@ -23,7 +23,7 @@ export class Frame extends Block {
   /** Width of the frame */
   public override get width(): number {
     const width = Math.max(this.title.length, this.block.width) + 2;
-    console.log(this.title, "frame width", width);
+    // console.log(this.title, "frame width", width);
     return Math.max(this.title.length, this.block.width) + 2;
   }
 

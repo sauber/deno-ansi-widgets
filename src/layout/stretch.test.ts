@@ -1,5 +1,5 @@
 import { assertEquals } from "@std/assert";
-import { type Elements, stretch } from "./stretch.ts"; // Assuming stretch.ts is in the same directory
+import { distribute, type Elements, stretch } from "./stretch.ts"; // Assuming stretch.ts is in the same directory
 
 Deno.test("stretch: no stretchable elements", () => {
   const elements: Elements = [[10, false], [20, false], [30, false]];
@@ -27,4 +27,11 @@ Deno.test("stretch: mixed elements, expand", () => {
   const targetSize = 150; // Non-stretchable sum = 40. Remaining = 110. Stretchable sum = 60. Ratio = 110/60 = 1.833
   const expected: Elements = [[10, false], [37, true], [30, false], [73, true]]; // 20*1.833 = 36.66 -> 37, 40*1.833 = 73.33 -> 73
   assertEquals(stretch(elements, targetSize), expected);
+});
+
+Deno.test("distribution", () => {
+  assertEquals(distribute([3, 3, 3], 10), [3, 4, 3]);
+  assertEquals(distribute([1, 2], 4), [1, 3]);
+  assertEquals(distribute([2, 1], 4), [3, 1]);
+  assertEquals(distribute([0,1,3], 2), [0, 1, 1]);
 });
