@@ -1,8 +1,8 @@
 import type { Blocks } from "./block.ts";
-import { Node } from "./node.ts";
+import { Group } from "./group.ts";
 
 /** One or more blocks on top of each other with same width */
-export class Stack extends Node {
+export class Stack extends Group {
   constructor(blocks: Blocks) {
     super(blocks);
     // Adjust width of all blocks to the block with maximum width

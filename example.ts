@@ -5,7 +5,6 @@ import { Split } from "./src/layout/split.ts";
 import { Box } from "./src/layout/box.ts";
 import { LineChart } from "./src/layout/linechart.ts";
 import { Static } from "./src/layout/static.ts";
-import { Fit } from "./src/layout/fit.ts";
 
 // Widgets
 const title = new TextLine("Deno ANSI Widgets");
@@ -21,12 +20,10 @@ const dashboard = new Frame(
       new Frame(new Box(2, 2, "."), "Box 2x2"),
       new Frame(chart, "Line Chart"),
     ]),
-    new Fit(
-      new Split([
-        new Frame(new Fit(new Static("Fitted\ntext"))),
-        new Frame(new Fit(new Static("Unfitted text"))),
-      ]),
-    ),
+    new Split([
+      new Frame(new Static("Wrapped\ntext")),
+      new Frame(new Static("Unwrapped text")),
+    ]),
     new Frame(footer),
   ]),
   "Example Dashboard",
@@ -36,10 +33,10 @@ const dashboard = new Frame(
 console.log(dashboard.toString());
 
 // Update values in widgets
-title.update("Updated Deno ANSI Widgets");
-footer.update("Updated Footer");
-chart.update([2, 4, 3, 6, 5, 7, 6, 8, 7, 9]);
+// title.update("Updated Deno ANSI Widgets");
+// footer.update("Updated Footer");
+// chart.update([2, 4, 3, 6, 5, 7, 6, 8, 7, 9]);
 
-// Render updated dashboard, overwrite previous output
-const cursorUp = `\u001b[${dashboard.height}A`; // Move cursor up
-console.log(cursorUp + dashboard.toString());
+// // Render updated dashboard, overwrite previous output
+// const cursorUp = `\u001b[${dashboard.height}A`; // Move cursor up
+// console.log(cursorUp + dashboard.toString());

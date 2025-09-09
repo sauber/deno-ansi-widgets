@@ -1,7 +1,7 @@
 import type { Blocks } from "./block.ts";
-import { Node } from "./node.ts";
+import { Group } from "./group.ts";
 
-export class Split extends Node {
+export class Split extends Group {
   constructor(blocks: Blocks) {
     super(blocks);
     // Adjust height of all blocks to the block with maximum height

@@ -1,17 +1,16 @@
 import { Block, type Blocks } from "./block.ts";
+import { Fit } from "./fit.ts";
 import { type Elements, stretch } from "./stretch.ts";
 
-/** Handle multiple blocks */
-export abstract class Node extends Block {
-  constructor(protected readonly blocks: Blocks) {
+/** Alignment of multiple blocks */
+export abstract class Group extends Block {
+  protected readonly blocks: Blocks;
+
+  constructor(blocks: Blocks) {
     super();
+    this.blocks = blocks.map((b) => new Fit(b));
     this.canSetWidth = this.blocks.some((b) => b.canSetWidth);
     this.canSetHeight = this.blocks.some((b) => b.canSetHeight);
-  }
-
-  /** Create derived class with new set of blocks */
-  public create(blocks: Blocks): this {
-    return new (this.constructor as new (blocks: Blocks) => this)(blocks);
   }
 
   /** Sum of widths of all blocks */
