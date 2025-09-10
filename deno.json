@@ -8,5 +8,13 @@
     "@std/cli": "jsr:@std/cli@^1.0.22",
     "@std/fmt": "jsr:@std/fmt@^1.0.8",
     "cli-truncate": "npm:cli-truncate@^5.0.0"
+  },
+  "lock": false,
+  "publish": {
+    "exclude": ["src/*/*.test.ts"],
+    "include": ["LICENSE", "README.md", "mod.ts", "example.ts", "src/*/*.ts"]
+  },
+  "tasks": {
+    "example": "deno --allow-net=sample-files.com example.ts"
   }
 }
