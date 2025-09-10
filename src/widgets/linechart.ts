@@ -1,4 +1,5 @@
 import { scale } from "../utils/scale.ts";
+import { downsample } from "@sauber/statistics";
 
 /** Create a terminal printable line chart from an array of numbers */
 export function linechart(
@@ -31,11 +32,7 @@ export function linechart(
   ).reverse();
 
   // Downsample data to fit width
-  const downsampled = width
-    ? data.filter((_, i) =>
-      i % Math.ceil(data.length / (width - yLabelWidth)) === 0
-    )
-    : data;
+  const downsampled = width ? downsample(data, width - yLabelWidth) : data;
   const graphWidth: number = downsampled.length;
 
   // Chart grid, indexed [y][x] where [0][0] is top-left
