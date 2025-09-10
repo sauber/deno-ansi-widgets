@@ -37,6 +37,15 @@ Deno.test("Display one gauge over maximum", () => {
   assertEquals(output, expected);
 });
 
+Deno.test("Min=max", () => {
+  const width = 40;
+  const gauge: Gauge = ["Test Gauge", 100, 100, 100];
+  const output: string = gauges([gauge], width);
+  assertEquals(output.length, width);
+  const expected = "Test Gauge 100 [███████████████100█] 100";
+  assertEquals(output, expected);
+});
+
 Deno.test("Display multiple gauges", () => {
   const width = 50;
   const gaugesData: Gauge[] = [

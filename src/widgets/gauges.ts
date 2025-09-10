@@ -35,7 +35,9 @@ export function gauges(gauges: Gauge[], width: number): string {
   // Render each gauge
   return gauges.map(([title, min, max, current]) => {
     // Calculate the percentage of the bar to fill
-    const percent = (current - min) / (max - min);
+    const percent = (max - min === 0)
+      ? (current >= max ? 1 : 0)
+      : (current - min) / (max - min);
     const fill = Math.round(Math.max(0, Math.min(1, percent)) * barWidth);
     const empty = barWidth - fill;
 
