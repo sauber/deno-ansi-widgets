@@ -52,7 +52,7 @@ export function linechart(
   // Convert data values to y indices
   const stepSize: number = yLabels[1] - yLabels[0];
   const line: number[] = downsampled.map((value) =>
-    (Math.round(value / stepSize) * stepSize - yLabels[0]) / stepSize
+    Math.round((value - yLabels[0]) / stepSize)
   );
 
   // Plot data points

@@ -1,4 +1,3 @@
-
 import { assertEquals, assertThrows } from "@std/assert";
 import { linechart } from "./linechart.ts";
 
@@ -8,9 +7,13 @@ Deno.test("Empty", () => {
 });
 
 Deno.test("Height < 2", () => {
-  assertThrows(() => {
-    linechart([1, 2, 3], 1);
-  }, Error, "Height must be at least 2");
+  assertThrows(
+    () => {
+      linechart([1, 2, 3], 1);
+    },
+    Error,
+    "Height must be at least 2",
+  );
 });
 
 Deno.test("Single data point", () => {
@@ -48,5 +51,19 @@ Deno.test("Render #3", () => {
     " 10├  ╭╮",
     "  0├──╯╰",
     "-10├    ",
+  ]);
+});
+
+Deno.test("Render #4", () => {
+  const chart = linechart([0.5745445329702179, 0.7249570604872655], 7, 39);
+  const lines: string[] = chart.split("\n");
+  assertEquals(lines, [
+    "0.85├ ",
+    " 0.8├ ",
+    "0.75├ ",
+    " 0.7├╭",
+    "0.65├│",
+    " 0.6├│",
+    "0.55├╯",
   ]);
 });
