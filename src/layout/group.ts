@@ -1,6 +1,6 @@
 import { Block, type Blocks } from "./block.ts";
 import { Fit } from "./fit.ts";
-import { type Elements, stretch } from "./stretch.ts";
+import { type Elements, stretch } from "../utils/stretch.ts";
 
 /** Alignment of multiple blocks */
 export abstract class Group extends Block {
