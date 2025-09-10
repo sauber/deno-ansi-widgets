@@ -6,3 +6,7 @@ export * from "./src/layout/static.ts";
 export * from "./src/layout/textline.ts";
 export * from "./src/layout/split.ts";
 export * from "./src/widgets/gauges.ts";
+export * from "./src/widgets/frame.ts";
+export * from "./src/widgets/linechart.ts";
+export * from "./src/widgets/frame.ts";
+export * from "./src/widgets/progress.ts";
