@@ -29,7 +29,6 @@ export abstract class Group extends Block {
       b,
     ) => [b.width, b.canSetWidth]);
     const target: Elements = stretch(current, width);
-    // console.log("split setWidth", {width, current, target});
 
     // Set each block to new width
     this.blocks.forEach((b, i) => {

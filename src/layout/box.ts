@@ -1,7 +1,7 @@
 import { ansiLength, ansiTrunk } from "../utils/ansi.ts";
 import { Block } from "./block.ts";
 
-/** Rows of lines of spaces with same width */
+/** Rows of filled lines with same width */
 export class Box extends Block {
   private line: string;
 

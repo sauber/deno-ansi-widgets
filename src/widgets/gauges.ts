@@ -54,9 +54,6 @@ export function gauges(gauges: Gauge[], width: number): string {
     const minStr = min.toString().padStart(minWidth);
     const maxStr = max.toString().padStart(maxWidth);
 
-    // Render the current value
-    // const currentStr = current.toString().padStart(maxWidth);
-
     // Combine all the parts
     return `${title.padEnd(titleWidth)} ${minStr} [${annotated}] ${maxStr}`;
   }).join("\n");

@@ -1,6 +1,5 @@
 import { Block } from "./block.ts";
 import { frame } from "../widgets/frame.ts";
-import { fit } from "../utils/fit.ts";
 import { Fit } from "./fit.ts";
 
 /** Bot a frame around a Block */

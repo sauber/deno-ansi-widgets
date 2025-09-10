@@ -23,9 +23,6 @@ export class Stack extends Group {
 
   /** Concatenate lines from all blocks  */
   public get lines(): string[] {
-    // return this.blocks.flatMap((b) => b.lines);
-    const lines = this.blocks.map((b) => b.lines);
-    // console.log("stack lines", lines);
-    return lines.flat();
+    return this.blocks.flatMap((b) => b.lines);
   }
 }

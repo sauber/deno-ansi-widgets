@@ -45,7 +45,6 @@ Deno.test("Display multiple gauges", () => {
     ["Longer Gauge Title", 0, 200, 50],
   ];
   const output: string[] = gauges(gaugesData, width).split("\n");
-  // assertEquals(output.length, width);
   const expected = [
     "Foo                 0 [██████████████████100█] 100",
     "Bar                20 [███████████35░░░░░░░░░]  50",

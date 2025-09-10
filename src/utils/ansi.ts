@@ -1,7 +1,7 @@
 // Handle ansi strings
 import { unicodeWidth } from "@std/cli/unicode-width";
 import { stripAnsiCode } from "@std/fmt/colors";
-import cliTruncate from "cli-truncate";
+import cliTruncate from "npm:cli-truncate";
 
 /** Width of string in number of visible terminal characters */
 export function ansiLength(str: string): number {
