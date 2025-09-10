@@ -15,7 +15,7 @@ const title = new TextLine("Deno ANSI Widgets");
 const footer = new TextLine("Footer");
 const chart = new LineChart([1, 3, 2, 5, 4, 6, 5, 7, 6, 8], 5);
 const gauges = makeGauges([
-  ["Pos", 0, 100, 42],
+  ["Pos", 0, 100, 95],
   ["Neg", -11, 11, -0.11],
 ], 35);
 

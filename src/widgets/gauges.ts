@@ -1,6 +1,10 @@
 /** Gauge properties: [title, min, max, current] */
 export type Gauge = [string, number, number, number];
 
+// ANSI escape codes
+const inverse = "\u001B[7m";
+const reset = "\u001B[0m";
+
 /** Display a list of gauges
  * Each gauges has a label, a minimum value, a maximum value, and a current value.
  * Title are left aligned, min and max are right aligned.
@@ -50,9 +54,9 @@ export function gauges(gauges: Gauge[], width: number): string {
       ? `${bar.slice(0, fill)}${currentStr}${
         bar.slice(fill + currentStr.length)
       }`
-      : `${bar.slice(0, fill - currentStr.length - 1)}${currentStr}${
-        bar.slice(fill - 1)
-      }`;
+      : `${
+        bar.slice(0, fill - currentStr.length - 1)
+      }${inverse}${currentStr}${reset}${bar.slice(fill - 1)}`;
 
     // Render the min and max values as right adjusted strings
     const minStr = min.toString().padStart(minWidth);
