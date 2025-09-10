@@ -4,11 +4,13 @@ export type Gauge = [string, number, number, number];
 /** Display a list of gauges
  * Each gauges has a label, a minimum value, a maximum value, and a current value.
  * Title are left aligned, min and max are right aligned.
- * If current value is low, display current value after the bar
- * If current value is high, display current value inside the bar
+ * If current value is low, display current value after the bar.
+ * If current value is high, display current value inside the bar.
  * Example output of two gauges
+ * ```
  * Foo  0 [██ 10               ] 100`
  * Bar 20 [█████████████████50█]  50`
+ * ```
  * @param gauges An array of gauges to display
  * @param width The width of the progress bars in characters
  * @returns A string representing the list of gauges
