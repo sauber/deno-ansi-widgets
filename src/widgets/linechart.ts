@@ -34,7 +34,8 @@ export function linechart(
 
   // Downsample data to fit width
   const downsampled = width ? downsample(data, width - yLabelWidth) : data;
-  const graphWidth: number = downsampled.length;
+
+  const textmap: CharPlot = new CharPlot();
 
   // Insert Y Axis
   for (let y = 0; y < height; y++) textmap.insert(0, y, "├");
