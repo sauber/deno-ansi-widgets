@@ -1,3 +1,4 @@
+export * from "./src/layout/block.ts";
 export * from "./src/layout/box.ts";
 export * from "./src/layout/frame.ts";
 export * from "./src/layout/linechart.ts";
