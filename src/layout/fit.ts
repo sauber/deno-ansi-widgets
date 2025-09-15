@@ -17,13 +17,11 @@ export class Fit extends Block {
   }
 
   public override setWidth(width: number): number {
-    // console.log("Fit setWidth", width, this.block.toString());
     this.block.setWidth(width);
     return this.width = width;
   }
 
   public override setHeight(height: number): number {
-    // console.log("Fit setHeight", height, this.block.toString());
     this.block.setHeight(height);
     return this.height = height;
   }

@@ -1,5 +1,6 @@
 import { Block } from "./block.ts";
 
+/** Treat a string of text as a block */
 export class TextLine extends Block {
   public override readonly canSetHeight = false;
   public override readonly height = 1;

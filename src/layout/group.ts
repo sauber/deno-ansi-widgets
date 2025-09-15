@@ -1,6 +1,6 @@
 import { Block, type Blocks } from "./block.ts";
 import { Fit } from "./fit.ts";
-import { type Elements, stretch } from "./stretch.ts";
+import { type Elements, stretch } from "../utils/stretch.ts";
 
 /** Alignment of multiple blocks */
 export abstract class Group extends Block {
@@ -29,7 +29,6 @@ export abstract class Group extends Block {
       b,
     ) => [b.width, b.canSetWidth]);
     const target: Elements = stretch(current, width);
-    // console.log("split setWidth", {width, current, target});
 
     // Set each block to new width
     this.blocks.forEach((b, i) => {

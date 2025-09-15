@@ -1,5 +1,6 @@
 import { CharPlot } from "../utils/charplot.ts";
 import { scale } from "../utils/scale.ts";
+import { downsample } from "@sauber/statistics";
 
 /** Create a terminal printable line chart from an array of numbers */
 export function linechart(
@@ -32,13 +33,8 @@ export function linechart(
   ).reverse();
 
   // Downsample data to fit width
-  const downsampled = width
-    ? data.filter((_, i) =>
-      i % Math.ceil(data.length / (width - yLabelWidth)) === 0
-    )
-    : data;
-
-  const textmap = new CharPlot();
+  const downsampled = width ? downsample(data, width - yLabelWidth) : data;
+  const graphWidth: number = downsampled.length;
 
   // Insert Y Axis
   for (let y = 0; y < height; y++) textmap.insert(0, y, "├");
@@ -46,7 +42,7 @@ export function linechart(
   // Convert data values to y indices
   const stepSize: number = yLabels[1] - yLabels[0];
   const line: number[] = downsampled.map((value) =>
-    (Math.round(value / stepSize) * stepSize - yLabels[0]) / stepSize
+    Math.round((value - yLabels[0]) / stepSize)
   );
 
   // Plot data points

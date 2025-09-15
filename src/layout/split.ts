@@ -1,6 +1,7 @@
 import type { Blocks } from "./block.ts";
 import { Group } from "./group.ts";
 
+/** Display multiple blocks side by side */
 export class Split extends Group {
   constructor(blocks: Blocks) {
     super(blocks);

@@ -2,6 +2,7 @@ import { scale } from "../utils/scale.ts";
 import { linechart } from "../widgets/linechart.ts";
 import { Block } from "./block.ts";
 
+/** Display an array of numbers as a line chart in a block */
 export class LineChart extends Block {
   // Desired width
   private _width: number;

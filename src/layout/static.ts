@@ -17,11 +17,8 @@ export class Static extends Block {
   constructor(content: string, width?: number, height?: number) {
     super();
     const split: string[] = content.split("\n");
-    // console.log("split");console.log(split.join("\n"));
-    this.width = width ||
-      Math.max(...split.map((l) => ansiLength(l)));
+    this.width = width || Math.max(...split.map((l) => ansiLength(l)));
     this.height = height || split.length;
-    // console.log("static width", this.width, "height", this.height);
     this.lines = split;
   }
 

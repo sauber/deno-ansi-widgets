@@ -1,14 +1,20 @@
 /** Gauge properties: [title, min, max, current] */
 export type Gauge = [string, number, number, number];
 
+// ANSI escape codes
+const inverse = "\u001B[7m";
+const reset = "\u001B[0m";
+
 /** Display a list of gauges
  * Each gauges has a label, a minimum value, a maximum value, and a current value.
  * Title are left aligned, min and max are right aligned.
- * If current value is low, display current value after the bar
- * If current value is high, display current value inside the bar
+ * If current value is low, display current value after the bar.
+ * If current value is high, display current value inside the bar.
  * Example output of two gauges
+ * ```
  * Foo  0 [██ 10               ] 100`
  * Bar 20 [█████████████████50█]  50`
+ * ```
  * @param gauges An array of gauges to display
  * @param width The width of the progress bars in characters
  * @returns A string representing the list of gauges
@@ -33,7 +39,9 @@ export function gauges(gauges: Gauge[], width: number): string {
   // Render each gauge
   return gauges.map(([title, min, max, current]) => {
     // Calculate the percentage of the bar to fill
-    const percent = (current - min) / (max - min);
+    const percent = (max - min === 0)
+      ? (current >= max ? 1 : 0)
+      : (current - min) / (max - min);
     const fill = Math.round(Math.max(0, Math.min(1, percent)) * barWidth);
     const empty = barWidth - fill;
 
@@ -46,16 +54,13 @@ export function gauges(gauges: Gauge[], width: number): string {
       ? `${bar.slice(0, fill)}${currentStr}${
         bar.slice(fill + currentStr.length)
       }`
-      : `${bar.slice(0, fill - currentStr.length - 1)}${currentStr}${
-        bar.slice(fill - 1)
-      }`;
+      : `${
+        bar.slice(0, fill - currentStr.length - 1)
+      }${inverse}${currentStr}${reset}${bar.slice(fill - 1)}`;
 
     // Render the min and max values as right adjusted strings
     const minStr = min.toString().padStart(minWidth);
     const maxStr = max.toString().padStart(maxWidth);
-
-    // Render the current value
-    // const currentStr = current.toString().padStart(maxWidth);
 
     // Combine all the parts
     return `${title.padEnd(titleWidth)} ${minStr} [${annotated}] ${maxStr}`;
