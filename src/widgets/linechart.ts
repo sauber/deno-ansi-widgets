@@ -1,3 +1,4 @@
+import { CharPlot } from "../utils/charplot.ts";
 import { scale } from "../utils/scale.ts";
 
 /** Create a terminal printable line chart from an array of numbers */
@@ -36,18 +37,11 @@ export function linechart(
       i % Math.ceil(data.length / (width - yLabelWidth)) === 0
     )
     : data;
-  const graphWidth: number = downsampled.length;
 
-  // Chart grid, indexed [y][x] where [0][0] is top-left
-  const grid: string[][] = Array.from(
-    { length: height },
-    () => Array(graphWidth - 1).fill(" "),
-  );
+  const textmap = new CharPlot();
 
-  // Insert a char into (x,y) position in grid, where y=0 is bottom
-  function plot(x: number, y: number, char: string): void {
-    grid[height - y - 1][x] = char;
-  }
+  // Insert Y Axis
+  for (let y = 0; y < height; y++) textmap.insert(0, y, "├");
 
   // Convert data values to y indices
   const stepSize: number = yLabels[1] - yLabels[0];
@@ -56,30 +50,30 @@ export function linechart(
   );
 
   // Plot data points
-  for (let x = 0; x < line.length - 1; x++) {
-    const [y1, y2] = [line[x], line[x + 1]];
+  for (let x = 1; x < line.length; x++) {
+    const [y1, y2] = [line[x - 1], line[x]];
     if (y1 === y2) {
       // Going straight
-      plot(x, y1, "─");
+      textmap.insert(x, y1, "─");
     } else if (y1 < y2) {
       // Going up
-      plot(x, y2, "╭");
-      plot(x, y1, "╯");
+      textmap.insert(x, y2, "╭");
+      textmap.insert(x, y1, "╯");
     } else {
       // Going down
-      plot(x, y1, "╮");
-      plot(x, y2, "╰");
+      textmap.insert(x, y1, "╮");
+      textmap.insert(x, y2, "╰");
     }
 
     // Fill extra lines between points
     for (let y = Math.min(y1, y2) + 1; y < Math.max(y1, y2); y++) {
-      plot(x, y, "│");
+      textmap.insert(x, y, "│");
     }
   }
 
   // Combine y axis labels with chart grid
-  const chart: string = grid.map((row, i) =>
-    `${yTextLabels[i]}├${row.join("")}`
+  const chart: string = textmap.lines.map((line, i) =>
+    `${yTextLabels[i]}${line}`
   ).join("\n");
 
   return chart;
