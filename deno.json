@@ -4,11 +4,11 @@
   "license": "MIT",
   "exports": "./mod.ts",
   "imports": {
-    "@sauber/statistics": "jsr:@sauber/statistics@^0.5.0",
     "@std/assert": "jsr:@std/assert@^1.0.14",
     "@std/cli": "jsr:@std/cli@^1.0.22",
     "@std/fmt": "jsr:@std/fmt@^1.0.8",
-    "cli-truncate": "npm:cli-truncate@^5.0.0"
+    "cli-truncate": "npm:cli-truncate@^5.0.0",
+    "downsample-lttb-ts": "npm:downsample-lttb-ts@^0.0.6"
   },
   "lock": false,
   "publish": {

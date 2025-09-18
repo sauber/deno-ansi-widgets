@@ -1,6 +1,6 @@
 import { CharPlot } from "../utils/charplot.ts";
 import { scale } from "../utils/scale.ts";
-import { downsample } from "@sauber/statistics";
+import { downsample } from "../utils/downsample.ts";
 
 /** Create a terminal printable line chart from an array of numbers */
 export function linechart(
