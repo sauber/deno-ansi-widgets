@@ -5,22 +5,22 @@ import { Split } from "./src/layout/split.ts";
 import { Box } from "./src/layout/box.ts";
 import { LineChart } from "./src/layout/linechart.ts";
 import { Static } from "./src/layout/static.ts";
-import { gauges as makeGauges } from "./src/widgets/gauges.ts";
 import { blockify } from "jsr:@sauber/block-image";
 import { resize } from "https://deno.land/x/deno_image@0.0.4/mod.ts";
 import { decode } from "https://deno.land/x/jpegts@1.1/mod.ts";
 import { Progress } from "./src/layout/progress.ts";
+import { Gauges } from "./src/layout/gauges.ts";
 
-// Widgets
+// Updateable Widgets
 const title = new TextLine("Deno ANSI Widgets");
 const chart = new LineChart([1, 3, 2, 5, 4, 6, 5, 7, 6, 8], 5);
-const gauges = makeGauges([
-  ["Pos", 0, 100, 95],
-  ["Neg", -11, 11, -0.11],
-], 35);
+const gauges = new Gauges([
+  ["Pos", 0, 100, 0],
+  ["Neg", -11, 11, 0],
+]);
 const progress = new Progress("Progress", 100);
 
-// Download and prepare image
+// Download and blockify image
 const url =
   "https://sample-files.com/downloads/images/jpg/color_test_800x600_118kb.jpg";
 const data = (await fetch(url)).arrayBuffer();
@@ -35,7 +35,7 @@ const resizedJPEG: Uint8Array = await resize(originalJPEG, {
 const rawData: Uint8Array = decode(resizedJPEG).data;
 const printable: string = blockify(rawData, imageCols, imageRows);
 
-// Create a dashboard of multiple widgets
+// Create a dashboard layout with multiple widgets
 const dashboard = new Frame(
   new Stack([
     new Frame(title, "Title"),
@@ -54,8 +54,8 @@ const dashboard = new Frame(
       new Frame(new Static("Wrapped\ntext")),
       new Frame(new Static("Unwrapped text")),
     ]),
-    new Frame(new Static(gauges.toString()), "Gauges"),
-    progress
+    new Frame(gauges),
+    progress,
   ]),
   "Example Dashboard",
 );
@@ -66,7 +66,8 @@ console.log(dashboard.toString());
 // Update values in widgets
 title.update("Updated Deno ANSI Widgets");
 progress.update(50);
-chart.update([2, 4, 3, 6, 5, 7, 6, 8, 7, 9]);
+chart.update([2, 4, 3, 6, 5, 7, 6, 8, 7, 9, 10, 8]);
+gauges.update([95, -0.11]);
 
 // Render updated dashboard, overwrite previous output
 const cursorUp = `\u001b[${dashboard.height}A`; // Move cursor up

@@ -20,13 +20,13 @@ export class Progress extends Block {
   }
 
   /** New width of text line */
-  public override setWidth(width: number): number {
+  public setWidth(width: number): number {
     this.width = width;
     return width;
   }
 
   /** New height of text line, has no effect */
-  public override setHeight(_height: number): number {
+  public setHeight(_height: number): number {
     return 1;
   }
 
@@ -35,7 +35,7 @@ export class Progress extends Block {
     this.current = current;
   }
 
-  public override get lines(): string[] {
+  public get lines(): string[] {
     const bar: string = progress(
       this.current,
       this.total,
