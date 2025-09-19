@@ -2,7 +2,7 @@ import { Block } from "./block.ts";
 import { type Gauge, gauges } from "../widgets/gauges.ts";
 
 export class Gauges extends Block {
-  public override readonly height;
+  public override readonly height: number;
   public override canSetHeight: boolean = false;
 
   constructor(
