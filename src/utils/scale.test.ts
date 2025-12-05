@@ -29,7 +29,6 @@ Deno.test("scale mixed negative and positive integers", () => {
   assertEquals(actual, expected);
 });
 
-
 Deno.test("scale large integers", () => {
   const min = -1000000;
   const max = 1000000;
@@ -52,7 +51,16 @@ Deno.test("scale floats within a tight range", () => {
   const min = 0.974;
   const max = 0.986;
   const count = 5;
-  const expected = [0.97, 0.975, 0.98, 0.985, 0.99  ];
+  const expected = [0.97, 0.975, 0.98, 0.985, 0.99];
+  const actual = scale(min, max, count);
+  assertEquals(actual, expected);
+});
+
+Deno.test("Float of various lenghts", () => {
+  const min = 0.5;
+  const max = 1.5;
+  const count = 5;
+  const expected = [0.5, 0.75, 1, 1.25, 1.5];
   const actual = scale(min, max, count);
   assertEquals(actual, expected);
 });
