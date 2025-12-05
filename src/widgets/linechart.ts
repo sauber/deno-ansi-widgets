@@ -1,6 +1,7 @@
 import { CharPlot } from "../utils/charplot.ts";
 import { scale } from "../utils/scale.ts";
 import { downsample } from "../utils/downsample.ts";
+import { padleft } from "../utils/padleft.ts";
 
 /** Create a terminal printable line chart from an array of numbers */
 export function linechart(
@@ -24,20 +25,19 @@ export function linechart(
   const max = Math.max(...data);
   const yLabels: number[] = scale(min, max, height);
 
-  // Set width for y axis labels to width of longest label
-  const yLabelWidth: number = Math.max(...yLabels.map((l) => String(l).length));
-
   // Convert numeric labels to right adjusted text labels, highest label first
-  const yTextLabels: string[] = yLabels.map((l) =>
-    String(l).padStart(yLabelWidth, " ")
-  ).reverse();
+  const yTextLabels: string[] = padleft(yLabels).reverse();
+
+  // Set width for y axis labels to width of longest label
+  const yLabelWidth: number = yTextLabels[0].length;
 
   // Downsample data to fit width
   const downsampled = width ? downsample(data, width - yLabelWidth) : data;
 
+  // Rectangular text area for holding chart characters
   const textmap: CharPlot = new CharPlot();
 
-  // Insert Y Axis
+  // Insert Y Axis symbols
   for (let y = 0; y < height; y++) textmap.insert(0, y, "├");
 
   // Convert data values to y indices
