@@ -1,80 +1,126 @@
 import { scale } from "../utils/scale.ts";
 import { TextLine } from "./textline.ts";
 
-/** Generate line with numbers from min to max spread out over length
- * Example output:
- * 0────5────10────15────20
- *
- * @param min Lowest number on scale
- * @param max Highest number on scale
- * @param length Length of the line in characters
- * @param separator Single char between numbers
- * @returns Combined string of line with numbers
- */
-export function xaxis(
-  min: number,
-  max: number,
-  length: number,
-  separator: string = "─",
-): string {
-  // A string to hold the final line
-  let line: TextLine = TextLine.width(length, separator);
+export class XAxis {
+  // private line: TextLine;
+  // public fittedNomLabels: { text: string; position: number }[] = [];
+  public readonly labels: number[];
+  public readonly positions: number[];
 
-  // Line too short for min and max
-  if (length < String(min).length + String(max).length + 1) {
-    return line.toString();
+  constructor(
+    min: number,
+    max: number,
+    private readonly length: number,
+    private readonly separator: string = "─",
+  ) {
+    this.labels = XAxis.makeLabels(min, max, length, separator);
+    this.positions = XAxis.calcPositions(this.labels, length);
+
+    // TODO: Move below code to toString() function
+    // this.line = TextLine.width(length, separator);
+
+    // this.line = this.line.left(String(min));
+    // this.fittedNomLabels.push({ text: String(min), position: 0 });
+
+    // this.line = this.line.right(String(max));
+
+    // const offset = String(min).length;
+
+    // for (let i = 1; i < xLabels.length - 1; i++) {
+    //   const label = xLabels[i];
+    //   const position = offset + i * spacing;
+    //   this.line = this.line.at(position, String(label));
+    //   this.fittedNomLabels.push({
+    //     text: String(label),
+    //     position: Math.round(position),
+    //   });
+    // }
+
+    // this.fittedNomLabels.push({
+    //   text: String(max),
+    //   position: length - String(max).length,
+    // });
+    // this.fittedNomLabels.sort((a, b) => a.position - b.position);
   }
 
-  // Estimate number of labels that can fit
-  const maxLabelWidth = Math.max(String(min).length, String(max).length);
-  const estimatedLabels = Math.floor(length / (maxLabelWidth + 1));
+  /** Generate the numeric labels to fit within the given length */
+  private static makeLabels(
+    min: number,
+    max: number,
+    length: number,
+    separator: string,
+  ): number[] {
+    // Confirm if at least min and max can fit
+    if (length < String(min).length + String(max).length + 1) {
+      return [];
+    }
 
-  // Reduce count of labels until confirmed that they fit
-  let numLabels = estimatedLabels;
-  while (numLabels > 2) {
-    const numbers = scale(min, max, numLabels);
-    // console.log({ numbers });
-    // Combined width of all numbers
-    const numberWidth = numbers
-      .map((n) => String(n).length)
-      .reduce((a, b) => a + b, 0);
-    // Combined width of all separators
-    const separatorsWidth = (numLabels - 1) * separator.length;
-    if (numberWidth + separatorsWidth < length) break;
-    numLabels--;
+    // Estimate a starting number of labels
+    const maxLabelWidth = Math.max(String(min).length, String(max).length);
+    const estimatedLabels = Math.floor(length / (maxLabelWidth + 1));
+    let numLabels = estimatedLabels;
+
+    // Reduce number of labels until they fit
+    let numbers: number[] = [];
+    while (numLabels > 2) {
+      const tryNumbers = scale(min, max, numLabels);
+      const numberWidth = tryNumbers
+        .map((n) => String(n).length)
+        .reduce((a, b) => a + b, 0);
+      const separatorsWidth = (numLabels - 1) * separator.length;
+      if (numberWidth + separatorsWidth < length) break;
+      numLabels--;
+      numbers = tryNumbers;
+    }
+
+    return numbers;
   }
 
-  // x axis numeric labels
-  const xLabels: number[] = scale(min, max, numLabels);
+  /** Calculate positions of labels. First label is at position 0, last label is at position length-1, and remaining labels are spaced evenly in between */
+  private static calcPositions(
+    labels: number[],
+    length: number,
+  ): number[] {
+    const min: number = labels[0];
+    const max: number = labels[labels.length - 1];
+    const offset = String(min).length;
+    const availableLength = length - String(min).length - String(max).length;
+    const spacing = availableLength / (labels.length - 1);
 
-  // Add min and max labels at the ends
-  line = line.left(String(min));
-  line = line.right(String(max));
-  // console.log({ line: line.toString() });
+    const positions: number[] = [0];
+    const numLabels = labels.length;
+    if (numLabels === 0) return positions;
 
-  // Amount chars available for intermediate labels
-  const offset = String(min).length;
-  const availableLength = length - String(min).length - String(max).length;
-  const spacing = availableLength / (numLabels - 1);
-  // console.log({ length, offset, availableLength, spacing });
-
-  for (let i = 1; i < xLabels.length - 1; i++) {
-    const label = xLabels[i];
-    const position = offset + i * spacing;
-    // console.log({ label, position, string: String(label) });
-    line = line.at(position, String(label));
+    for (let i = 0; i < numLabels; i++) {
+      const position = offset + i * spacing;
+      positions.push(position);
+    }
+    positions.push(length - 1);
+    return positions;
   }
 
-  // Plot the numeric labels onto line
-  // xLabels.forEach((label) => {
-  //   const ratio = (label - min) / (max - min);
-  //   const position = Math.min(
-  //     length - 1,
-  //     Math.max(0, Math.round(ratio * (length - 1))),
-  //   );
-  //   console.log({ label, ratio, position, string: String(label) });
-  //   line = line.at(position, String(label));
-  // });
+  /** Plot labels onto a line with separator chars inbetween */
+  private makeLine(): TextLine {
+    const labels: number[] = this.labels;
+    const pos: number[] = this.positions;
 
-  return line.toString();
+    let line = TextLine.width(this.length, this.separator);
+
+    // First and last labels
+    line = line.left(String(labels[0]));
+    line = line.right(String(labels[labels.length - 1]));
+
+    // Plot remaining labels
+    for (let i = 1; i < this.labels.length - 1; i++) {
+      const label = labels[i];
+      const position = pos[i];
+      line = line.at(position, String(label));
+    }
+
+    return line;
+  }
+
+  toString(): string {
+    return this.makeLine().toString();
+  }
 }
