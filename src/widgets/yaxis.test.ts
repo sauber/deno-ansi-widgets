@@ -23,7 +23,7 @@ Deno.test("Multiple lines", () => {
   ]);
 });
 
-Deno.test("Custom seperator", () => {
+Deno.test("Custom separator", () => {
   const chart = yaxis(0, 10, 5, "x");
   const lines = chart.split("\n");
   assertEquals(lines, [

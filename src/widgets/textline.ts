@@ -34,10 +34,12 @@ export class TextLine {
   /** Overwrite centered at position */
   public at(position: number, label: string): TextLine {
     const line =
-      this.line.substring(0, position - Math.floor(label.length / 2)) +
+      // this.line.substring(0, position - Math.floor(label.length / 2)) +
+      this.line.substring(0, Math.round(position - label.length / 2)) +
       label +
       this.line.substring(
-        position + Math.ceil(label.length / 2),
+        // position + Math.ceil(label.length / 2),
+        Math.round(position + label.length / 2),
         this.line.length,
       );
     return new TextLine(line, this.fill);

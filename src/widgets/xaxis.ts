@@ -33,10 +33,12 @@ export function xaxis(
   let numLabels = estimatedLabels;
   while (numLabels > 2) {
     const numbers = scale(min, max, numLabels);
-    console.log({ numbers });
+    // console.log({ numbers });
+    // Combined width of all numbers
     const numberWidth = numbers
       .map((n) => String(n).length)
       .reduce((a, b) => a + b, 0);
+    // Combined width of all separators
     const separatorsWidth = (numLabels - 1) * separator.length;
     if (numberWidth + separatorsWidth < length) break;
     numLabels--;
@@ -48,18 +50,18 @@ export function xaxis(
   // Add min and max labels at the ends
   line = line.left(String(min));
   line = line.right(String(max));
-  console.log({ line: line.toString() });
+  // console.log({ line: line.toString() });
 
   // Amount chars available for intermediate labels
   const offset = String(min).length;
   const availableLength = length - String(min).length - String(max).length;
   const spacing = availableLength / (numLabels - 1);
-  console.log({ length, offset, availableLength, spacing });
+  // console.log({ length, offset, availableLength, spacing });
 
   for (let i = 1; i < xLabels.length - 1; i++) {
     const label = xLabels[i];
-    const position = Math.floor(offset + i * spacing);
-    console.log({ label, position, string: String(label) });
+    const position = offset + i * spacing;
+    // console.log({ label, position, string: String(label) });
     line = line.at(position, String(label));
   }
 

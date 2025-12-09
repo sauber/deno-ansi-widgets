@@ -16,7 +16,6 @@ Deno.test("Fill with multichars", () => {
   assertEquals(b.toString(), "ab");
 });
 
-
 Deno.test("Char", () => {
   const b = TextLine.width(2, "=");
   assertEquals(b.toString(), "==");
@@ -39,5 +38,5 @@ Deno.test("At", () => {
 
 Deno.test("Center", () => {
   const b = TextLine.width(5).center("hi");
-  assertEquals(b.toString(), " hi  ");
+  assertEquals(b.toString(), "  hi ");
 });
