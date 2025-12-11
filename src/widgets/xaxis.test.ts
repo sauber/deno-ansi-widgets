@@ -16,13 +16,13 @@ Deno.test("Min and max line", () => {
   assertEquals(axis.toString(), "0─10");
 });
 
-Deno.test("Basic line", () => {
-  const axis = new XAxis(0, 20, 17);
-  assertEquals(axis.toString(), "0───5──10──15──20");
+Deno.test("Labels and positions", () => {
+  const axis = new XAxis(0, 20, 13);
+  assertEquals(axis.labels, [0, 5, 10, 15, 20]);
+  assertEquals(axis.positions, [0, 3.5, 6, 8.5, 12]);
 });
 
-Deno.test("Labels and positions", () => {
-  const axis = new XAxis(0, 20, 17);
-  assertEquals(axis.labels, [0, 5, 10, 15, 20]);
-  assertEquals(axis.positions, [0, 5, 8, 12, 15]);
+Deno.test("Multiple labels", () => {
+  const axis = new XAxis(0, 20, 13);
+  assertEquals(axis.toString(), "0──5─10─15─20");
 });

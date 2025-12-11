@@ -2,8 +2,6 @@ import { scale } from "../utils/scale.ts";
 import { TextLine } from "./textline.ts";
 
 export class XAxis {
-  // private line: TextLine;
-  // public fittedNomLabels: { text: string; position: number }[] = [];
   public readonly labels: number[];
   public readonly positions: number[];
 
@@ -15,32 +13,6 @@ export class XAxis {
   ) {
     this.labels = XAxis.makeLabels(min, max, length, separator);
     this.positions = XAxis.calcPositions(this.labels, length);
-
-    // TODO: Move below code to toString() function
-    // this.line = TextLine.width(length, separator);
-
-    // this.line = this.line.left(String(min));
-    // this.fittedNomLabels.push({ text: String(min), position: 0 });
-
-    // this.line = this.line.right(String(max));
-
-    // const offset = String(min).length;
-
-    // for (let i = 1; i < xLabels.length - 1; i++) {
-    //   const label = xLabels[i];
-    //   const position = offset + i * spacing;
-    //   this.line = this.line.at(position, String(label));
-    //   this.fittedNomLabels.push({
-    //     text: String(label),
-    //     position: Math.round(position),
-    //   });
-    // }
-
-    // this.fittedNomLabels.push({
-    //   text: String(max),
-    //   position: length - String(max).length,
-    // });
-    // this.fittedNomLabels.sort((a, b) => a.position - b.position);
   }
 
   /** Generate the numeric labels to fit within the given length */
@@ -50,27 +22,32 @@ export class XAxis {
     length: number,
     separator: string,
   ): number[] {
-    // Confirm if at least min and max can fit
+    // Confirm if not even min and max can fit
     if (length < String(min).length + String(max).length + 1) {
       return [];
     }
 
     // Estimate a starting number of labels
-    const maxLabelWidth = Math.max(String(min).length, String(max).length);
-    const estimatedLabels = Math.floor(length / (maxLabelWidth + 1));
+    const minLabelWidth = Math.min(String(min).length, String(max).length);
+    let estimatedLabels = Math.floor(length / (minLabelWidth + 1));
     let numLabels = estimatedLabels;
 
     // Reduce number of labels until they fit
-    let numbers: number[] = [];
-    while (numLabels > 2) {
-      const tryNumbers = scale(min, max, numLabels);
+    let numbers: number[] = scale(min, max, numLabels);
+    while (--estimatedLabels >= 2) {
+      const tryNumbers = scale(min, max, estimatedLabels);
       const numberWidth = tryNumbers
         .map((n) => String(n).length)
         .reduce((a, b) => a + b, 0);
-      const separatorsWidth = (numLabels - 1) * separator.length;
-      if (numberWidth + separatorsWidth < length) break;
-      numLabels--;
-      numbers = tryNumbers;
+      const separatorsWidth = (estimatedLabels - 1) * separator.length;
+      const totalMinWidth = numberWidth + separatorsWidth;
+
+      // If the estimated labels fit, use them
+      if (totalMinWidth <= length) {
+        numLabels = estimatedLabels;
+        numbers = tryNumbers;
+        break;
+      }
     }
 
     return numbers;
@@ -87,15 +64,20 @@ export class XAxis {
     const availableLength = length - String(min).length - String(max).length;
     const spacing = availableLength / (labels.length - 1);
 
+    // First position
     const positions: number[] = [0];
     const numLabels = labels.length;
     if (numLabels === 0) return positions;
 
-    for (let i = 0; i < numLabels; i++) {
+    // Middle positions
+    for (let i = 1; i < numLabels - 1; i++) {
       const position = offset + i * spacing;
       positions.push(position);
     }
+
+    // Last position
     positions.push(length - 1);
+
     return positions;
   }
 
@@ -105,6 +87,9 @@ export class XAxis {
     const pos: number[] = this.positions;
 
     let line = TextLine.width(this.length, this.separator);
+    if (labels.length < 2) {
+      return line;
+    }
 
     // First and last labels
     line = line.left(String(labels[0]));
