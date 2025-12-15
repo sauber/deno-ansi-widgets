@@ -5,7 +5,7 @@ export type Point = [number, number, number];
 export type Points = Point[];
 
 /** Display pair of data in a plot */
-export class Scatter extends Block {
+export class Heatmap extends Block {
   // public override readonly canSetHeight = false;
   // public override readonly height = 1;
 

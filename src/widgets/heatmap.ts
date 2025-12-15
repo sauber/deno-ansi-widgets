@@ -6,13 +6,13 @@ import { YAxis } from "./yaxis.ts";
 export type Point = [number, number, number];
 export type Points = Point[];
 
-/** Render a scatter plot with Y and X axis
+/** Render a heatmap plot with Y and X axis
  * @param Points Array of points to plot
  * @param width Width of plot area
  * @param height Height of plot area
  * @returns Joined string of plot
  */
-export function scatter(
+export function heatmap(
   points: Points,
   width: number,
   height: number,
