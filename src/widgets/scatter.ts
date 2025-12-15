@@ -1,4 +1,6 @@
-import { scale } from "../utils/scale.ts";
+import { blockify } from "jsr:@sauber/block-image";
+import { XAxis } from "./xaxis.ts";
+import { YAxis } from "./yaxis.ts";
 
 /** X, Y and Value */
 export type Point = [number, number, number];
@@ -10,14 +12,93 @@ export type Points = Point[];
  * @param height Height of plot area
  * @returns Joined string of plot
  */
-export function scatter(points: Points, width: number, height: number): string {
-  // Range of yaxis
-  const ymin = Math.min(...points.map((p) => p[1]));
-  const ymax = Math.max(...points.map((p) => p[1]));
-  // Reserve to lines for x-axis labels
-  const rows = height - 2;
-  const yNumbers = scale(ymin, ymax, rows);
+export function scatter(
+  points: Points,
+  width: number,
+  height: number,
+): string[] {
+  // Y-axis
+  const ymin: number = Math.min(...points.map((p) => p[1]));
+  const ymax: number = Math.max(...points.map((p) => p[1]));
+  const yaxis = new YAxis(ymin, ymax, height - 1);
 
-  // Generate y-axis, x-axis and bitmap
-  return "";
+  // X-axis
+  const xmin: number = Math.min(...points.map((p) => p[0]));
+  const xmax: number = Math.max(...points.map((p) => p[0]));
+  const xaxis = new XAxis(xmin, xmax, width - yaxis.width);
+
+  // Calculate plot area sizes
+  const xwidth: number = xaxis.width * 2;
+  const yheight: number = yaxis.height * 2;
+  const grid: number[][] = new Array(yheight).fill(0).map(() =>
+    new Array(xwidth).fill(0)
+  );
+
+  // Bucket all the points into a plot area
+  // Keep track of max value for scaling
+  let bucketMin = 0;
+  let bucketMax = 0;
+  points.forEach(([x, y, v]) => {
+    const xpos = Math.floor(
+      ((x - xmin) / (xmax - xmin)) * (xwidth - 1),
+    );
+    const ypos = yheight - 1 - Math.floor(
+      ((y - ymin) / (ymax - ymin)) * (yheight - 1),
+    );
+    // console.log(
+    //   `Point (${x},${y}) with value ${v} goes to bucket (${xpos},${ypos})`,
+    // );
+    const origValue = grid[ypos][xpos];
+    const newValue = origValue + v;
+    grid[ypos][xpos] = newValue;
+    if (newValue > bucketMax) bucketMax = newValue;
+    if (newValue < bucketMin) bucketMin = newValue;
+  });
+
+  // console.log(grid, xwidth, yheight);
+
+  // Create a function which will scale bucket value to range 0-255.
+  // If all values are positive then scale using a simple multiplier.
+  // If some values are negative then scale to range -128 to 127 and offset with 128.
+  let scaleFn: (v: number) => number;
+  if (bucketMin >= 0) {
+    const multiplier = bucketMax === 0 ? 1 : 255 / bucketMax;
+    scaleFn = (v) => Math.floor(v * multiplier);
+  } else {
+    const multiplier = 127 / Math.max(-bucketMin, bucketMax);
+    const offset = 128;
+    scaleFn = (v) => offset + Math.floor(v * multiplier);
+  }
+
+  // Convert scaled bucket values to pixel array
+  const pixels: Uint8Array = new Uint8Array(xwidth * yheight * 4);
+  for (let y = 0; y < yheight; y++) {
+    for (let x = 0; x < xwidth; x++) {
+      const value = grid[y][x];
+      const scaled = scaleFn(value);
+      pixels[4 * (y * xwidth + x) + 0] = scaled; // R
+      pixels[4 * (y * xwidth + x) + 1] = scaled; // G
+      pixels[4 * (y * xwidth + x) + 2] = scaled; // B
+      // No alpha value set (default 0)
+    }
+  }
+
+  // Convert pixel array to block characters
+  const plot: string = blockify(pixels, xwidth, yheight);
+  const plotLines: string[] = plot.split("\n");
+
+  // Merge y-axis and plot lines
+  const ylines: string[] = yaxis.lines();
+  const chartLines: string[] = [];
+  for (let y = 0; y < yaxis.height; y++) {
+    const yline = ylines[y];
+    const plotLine = plotLines[y];
+    chartLines.push(yline + plotLine);
+  }
+
+  // Add x-axis lines
+  const xline = xaxis.toString().padStart(width, " ");
+  chartLines.push(xline);
+
+  return chartLines;
 }

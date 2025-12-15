@@ -8,11 +8,11 @@ export class XAxis {
   constructor(
     min: number,
     max: number,
-    private readonly length: number,
+    public readonly width: number,
     private readonly separator: string = "─",
   ) {
-    this.labels = XAxis.makeLabels(min, max, length, separator);
-    this.positions = XAxis.calcPositions(this.labels, length);
+    this.labels = XAxis.makeLabels(min, max, width, separator);
+    this.positions = XAxis.calcPositions(this.labels, width);
   }
 
   /** Generate the numeric labels to fit within the given length */
@@ -86,7 +86,7 @@ export class XAxis {
     const labels: number[] = this.labels;
     const pos: number[] = this.positions;
 
-    let line = TextLine.width(this.length, this.separator);
+    let line = TextLine.width(this.width, this.separator);
     if (labels.length < 2) {
       return line;
     }
