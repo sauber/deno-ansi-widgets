@@ -17,6 +17,14 @@ export function heatmap(
   width: number,
   height: number,
 ): string[] {
+  // Verify if there is enough space for axes:
+  // - Assuming X axis at bottom, create y axis at height - 1
+  // - Verify that width of y axis still leaves room for plot area
+  // - Assuming Y axis at left, create x axis at width - yaxis.width
+  // - Verify that X axis has labels to show, otherwise cancel X axis
+  // - If X axis is cancelled, re-create Y axis at full height
+  // - Verify that Y axis leaves room for plot area, otherwise cancel Y axis too
+
   // Y-axis
   const ymin: number = Math.min(...points.map((p) => p[1]));
   const ymax: number = Math.max(...points.map((p) => p[1]));
