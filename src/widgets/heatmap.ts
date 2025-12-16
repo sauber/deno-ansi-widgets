@@ -1,4 +1,4 @@
-import { blockify } from "jsr:@sauber/block-image";
+import { blockify } from "@sauber/block-image";
 import { XAxis } from "./xaxis.ts";
 import { YAxis } from "./yaxis.ts";
 
@@ -17,22 +17,46 @@ export function heatmap(
   width: number,
   height: number,
 ): string[] {
+  // No lines
+  if (height < 1) return [];
+
+  // No width
+  if (width < 1) return new Array(height).fill("");
+
+  // Start with the assumption that both X and Y axis will be included
+  let showXAxis = true;
+  let showYAxis = true;
+
+  // At least 3 lines to have Y axis
+  if (height < 3) showYAxis = false;
+
+  // At least 2 lines to have Z axis
+  if (height < 2) showXAxis = false;
+
   // Y-axis
   const ymin: number = Math.min(...points.map((p) => p[1]));
   const ymax: number = Math.max(...points.map((p) => p[1]));
-  const yaxis = new YAxis(ymin, ymax, height - 1);
+  let yaxis = new YAxis(ymin, ymax, height - 1);
 
   // X-axis
+  const xAxisWidth = width - (showYAxis ? yaxis.width : 0);
+  if (xAxisWidth < 1) {
+    showXAxis = false;
+    if (showYAxis) yaxis = new YAxis(ymin, ymax, height);
+  }
   const xmin: number = Math.min(...points.map((p) => p[0]));
   const xmax: number = Math.max(...points.map((p) => p[0]));
-  const xaxis = new XAxis(xmin, xmax, width - yaxis.width);
+  const xaxis = new XAxis(xmin, xmax, xAxisWidth);
+  console.log(xaxis);
 
-  // Calculate plot area sizes
-  const xwidth: number = xaxis.width * 2;
-  const yheight: number = yaxis.height * 2;
+  // Calculate plot area size, in half char block counts
+  const xwidth: number = xAxisWidth * 2;
+  const yheight: number = (height - (showXAxis ? 1 : 0)) * 2;
   const grid: number[][] = new Array(yheight).fill(0).map(() =>
     new Array(xwidth).fill(0)
   );
+
+  console.log({ showXAxis, showYAxis, width, yheight });
 
   // Bucket all the points into a plot area
   // Keep track of max value for scaling
@@ -45,9 +69,9 @@ export function heatmap(
     const ypos = yheight - 1 - Math.floor(
       ((y - ymin) / (ymax - ymin)) * (yheight - 1),
     );
-    // console.log(
-    //   `Point (${x},${y}) with value ${v} goes to bucket (${xpos},${ypos})`,
-    // );
+    console.log(
+      `Point (${x},${y}) with value ${v} goes to bucket (${xpos},${ypos})`,
+    );
     const origValue = grid[ypos][xpos];
     const newValue = origValue + v;
     grid[ypos][xpos] = newValue;
