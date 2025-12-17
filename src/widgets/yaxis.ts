@@ -20,7 +20,7 @@ export class YAxis {
   ) {
     this.labels = scale(min, max, this.height);
     this.width = separator.length +
-      Math.max(...this.labels.map((l) => String(l).length));
+      Math.max(0, ...this.labels.map((l) => String(l).length));
   }
 
   /** Convert numeric labels to right adjusted text labels, highest label first */

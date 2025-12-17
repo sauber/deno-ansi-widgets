@@ -1,4 +1,4 @@
-import { blockify } from "jsr:@sauber/block-image";
+import { blockify } from "@sauber/block-image";
 import { XAxis } from "./xaxis.ts";
 import { YAxis } from "./yaxis.ts";
 
@@ -17,7 +17,13 @@ export function heatmap(
   width: number,
   height: number,
 ): string[] {
-  // Verify if there is enough space for axes:
+  // Zero height plot
+  if (height < 1) return [];
+
+  // Zero width plot
+  if (width < 1) return Array(height).fill("");
+
+  // Confirm if there is enough space to display axes:
   // - Assuming X axis at bottom, create y axis at height - 1
   // - Verify that width of y axis still leaves room for plot area
   // - Assuming Y axis at left, create x axis at width - yaxis.width
@@ -25,19 +31,26 @@ export function heatmap(
   // - If X axis is cancelled, re-create Y axis at full height
   // - Verify that Y axis leaves room for plot area, otherwise cancel Y axis too
 
-  // Y-axis
-  const ymin: number = Math.min(...points.map((p) => p[1]));
-  const ymax: number = Math.max(...points.map((p) => p[1]));
-  const yaxis = new YAxis(ymin, ymax, height - 1);
+  // Create Y Axis with space for X Axis
+  const ymin = Math.min(...points.map((p) => p[1]));
+  const ymax = Math.max(...points.map((p) => p[1]));
+  const tempYAxis = new YAxis(ymin, ymax, height - 1);
+  const yAxisWidth = tempYAxis.width;
+  const canShowYAxis = (width - yAxisWidth) >= 1; // At least 1 char for plot
 
-  // X-axis
-  const xmin: number = Math.min(...points.map((p) => p[0]));
-  const xmax: number = Math.max(...points.map((p) => p[0]));
-  const xaxis = new XAxis(xmin, xmax, width - yaxis.width);
+  // Determine if X-axis can be displayed
+  const xmin = Math.min(...points.map((p) => p[0]));
+  const xmax = Math.max(...points.map((p) => p[0]));
+  const xAxisWidth = width - (canShowYAxis ? yAxisWidth : 0);
+  const xAxis = new XAxis(xmin, xmax, xAxisWidth);
+  const canShowXAxis = xAxis.labels.length > 0;
 
-  // Calculate plot area sizes
-  const xwidth: number = xaxis.width * 2;
-  const yheight: number = yaxis.height * 2;
+  // If cannot show X axis, regenerate y Axis at full height (even though it may not fit)
+  const yAxis = (!canShowXAxis) ? new YAxis(ymin, ymax, height) : tempYAxis;
+
+  // Plot area size in half char blocks
+  const xwidth: number = (canShowXAxis ? xAxis.width : width) * 2;
+  const yheight: number = (height - (canShowXAxis ? 1 : 0)) * 2;
   const grid: number[][] = new Array(yheight).fill(0).map(() =>
     new Array(xwidth).fill(0)
   );
@@ -46,24 +59,23 @@ export function heatmap(
   // Keep track of max value for scaling
   let bucketMin = 0;
   let bucketMax = 0;
+  const xPosMin = canShowXAxis ? xAxis.labels[0] : xmin;
+  const xPosMax = canShowXAxis ? xAxis.labels[xAxis.labels.length - 1] : xmax;
+  const yPosMin = canShowYAxis ? yAxis.labels[0] : ymin;
+  const yPosMax = canShowYAxis ? yAxis.labels[yAxis.labels.length - 1] : ymax;
   points.forEach(([x, y, v]) => {
     const xpos = Math.floor(
-      ((x - xmin) / (xmax - xmin)) * (xwidth - 1),
+      ((x - xPosMin) / (xPosMax - xPosMin)) * (xwidth - 1),
     );
     const ypos = yheight - 1 - Math.floor(
-      ((y - ymin) / (ymax - ymin)) * (yheight - 1),
+      ((y - yPosMin) / (yPosMax - yPosMin)) * (yheight - 1),
     );
-    // console.log(
-    //   `Point (${x},${y}) with value ${v} goes to bucket (${xpos},${ypos})`,
-    // );
     const origValue = grid[ypos][xpos];
     const newValue = origValue + v;
     grid[ypos][xpos] = newValue;
     if (newValue > bucketMax) bucketMax = newValue;
     if (newValue < bucketMin) bucketMin = newValue;
   });
-
-  // console.log(grid, xwidth, yheight);
 
   // Create a function which will scale bucket value to range 0-255.
   // If all values are positive then scale using a simple multiplier.
@@ -96,16 +108,18 @@ export function heatmap(
   const plotLines: string[] = plot.split("\n");
 
   // Merge y-axis and plot lines
-  const ylines: string[] = yaxis.lines();
+  const ylines: string[] = canShowYAxis
+    ? yAxis.lines()
+    : Array(height).fill("");
   const chartLines: string[] = [];
-  for (let y = 0; y < yaxis.height; y++) {
+  for (let y = 0; y < yAxis.height; y++) {
     const yline = ylines[y];
     const plotLine = plotLines[y];
     chartLines.push(yline + plotLine);
   }
 
   // Add x-axis lines
-  const xline = xaxis.toString().padStart(width, " ");
+  const xline = xAxis.toString().padStart(width, " ");
   chartLines.push(xline);
 
   return chartLines;
