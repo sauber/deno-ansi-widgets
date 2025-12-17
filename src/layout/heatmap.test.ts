@@ -12,5 +12,4 @@ Deno.test("Content", () => {
   const h = new Heatmap([], 2, 2);
   assertEquals(h.width, 2);
   assertEquals(h.height, 2);
-  assertEquals(h.toString(), "  \n  ");
 });

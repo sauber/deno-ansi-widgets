@@ -119,8 +119,7 @@ export function heatmap(
   }
 
   // Add x-axis lines
-  const xline = xAxis.toString().padStart(width, " ");
-  chartLines.push(xline);
+  if (canShowXAxis) chartLines.push(xAxis.toString().padStart(width, " "));
 
   return chartLines;
 }
