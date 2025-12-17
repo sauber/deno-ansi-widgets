@@ -1,3 +1,4 @@
+import { heatmap } from "../widgets/heatmap.ts";
 import { Block } from "./block.ts";
 
 /** X, Y coordinate and value */
@@ -36,7 +37,6 @@ export class Heatmap extends Block {
 
   /** Single line of text, padded or truncated to width */
   public override get lines(): string[] {
-    // Generate y-axis, x-axis and bitmap
-    return [];
+    return heatmap(this.data, this.width, this.height);
   }
 }
