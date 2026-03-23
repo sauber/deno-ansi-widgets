@@ -1,9 +1,5 @@
-import { heatmap } from "../widgets/heatmap.ts";
+import { heatmap, type Points } from "../widgets/heatmap.ts";
 import { Block } from "./block.ts";
-
-/** X, Y coordinate and value */
-export type Point = [number, number, number];
-export type Points = Point[];
 
 /** Display pair of data in a plot */
 export class Heatmap extends Block {
