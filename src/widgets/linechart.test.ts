@@ -67,3 +67,9 @@ Deno.test("Render #4", () => {
     "0.55├╯",
   ]);
 });
+
+Deno.test("Straight Line", () => {
+  const data = [0, 0];
+  const chart = linechart(data, 3, 10);
+  assertEquals(chart, "0├────────");
+});

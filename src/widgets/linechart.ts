@@ -12,8 +12,11 @@ export function linechart(
   // Empty chart
   if (data.length === 0) return "";
 
-  // Extend single data point as a line
-  if (data.length === 1) {
+  const min = Math.min(...data);
+  const max = Math.max(...data);
+
+  // Display straight line if no variation in values
+  if (min === max) {
     const label = String(data[0]);
     return `${label}├${"─".repeat(width ? width - label.length - 1 : 0)}`;
   }
@@ -21,8 +24,6 @@ export function linechart(
   if (height < 2) throw new Error("Height must be at least 2");
 
   // y axis numeric labels
-  const min = Math.min(...data);
-  const max = Math.max(...data);
   const yLabels: number[] = scale(min, max, height);
 
   // Convert numeric labels to right adjusted text labels, highest label first
