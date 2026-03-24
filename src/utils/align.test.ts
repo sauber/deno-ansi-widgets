@@ -1,37 +1,32 @@
 import { assertEquals } from "@std/assert";
-import { padleft } from "./padleft.ts";
+import { alignNumbers } from "./align.ts";
 
 Deno.test("Empty array", () => {
-  const result = padleft([]);
+  const result = alignNumbers([]);
   assertEquals(result, []);
 });
 
 Deno.test("Single number", () => {
-  const result = padleft([1]);
+  const result = alignNumbers([1]);
   assertEquals(result, ["1"]);
 });
 
 Deno.test("Multiple numbers", () => {
-  const result = padleft([1, 23, 456]);
+  const result = alignNumbers([1, 23, 456]);
   assertEquals(result, ["  1", " 23", "456"]);
 });
 
-Deno.test("Custom padding character", () => {
-  const result = padleft([1, 23, 456], "0");
-  assertEquals(result, ["001", "023", "456"]);
-});
-
 Deno.test("Negative numbers", () => {
-  const result = padleft([-1, -23, -456]);
+  const result = alignNumbers([-1, -23, -456]);
   assertEquals(result, ["  -1", " -23", "-456"]);
 });
 
 Deno.test("Mixed positive and negative numbers", () => {
-  const result = padleft([-1, 23, -456, 7]);
+  const result = alignNumbers([-1, 23, -456, 7]);
   assertEquals(result, ["  -1", "  23", "-456", "   7"]);
 });
 
 Deno.test("Floating point numbers", () => {
-  const result = padleft([1.2, 34.56, 7.8901]);
-  assertEquals(result, ["   1.2", " 34.56", "7.8901"]);
+  const result = alignNumbers([1.2, 34.56, 7.8901]);
+  assertEquals(result, [" 1.2000", "34.5600", " 7.8901"]);
 });

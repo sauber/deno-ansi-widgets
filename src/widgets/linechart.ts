@@ -1,7 +1,7 @@
 import { CharPlot } from "../utils/charplot.ts";
 import { scale } from "../utils/scale.ts";
 import { downsample } from "../utils/downsample.ts";
-import { padleft } from "../utils/padleft.ts";
+import { alignNumbers } from "../utils/align.ts";
 
 /** Create a terminal printable line chart from an array of numbers */
 export function linechart(
@@ -27,7 +27,7 @@ export function linechart(
   const yLabels: number[] = scale(min, max, height);
 
   // Convert numeric labels to right adjusted text labels, highest label first
-  const yTextLabels: string[] = padleft(yLabels).reverse();
+  const yTextLabels: string[] = alignNumbers(yLabels).reverse();
 
   // Set width for y axis labels to width of longest label
   const yLabelWidth: number = yTextLabels[0].length;
