@@ -56,10 +56,53 @@ Deno.test("Fail to insert multiple char string at one position", () => {
 
 Deno.test("ANSI encoded chars", () => {
   const cp = new CharPlot();
-  cp.insert(0, 0, "\u001b[31mあ\u001b[39m");
-  cp.insert(1, 1, "\u001b[32mい\u001b[39m");
+  cp.insert(0, 0, "あ", "\u001b[31m");
+  cp.insert(1, 1, "い", "\u001b[32m");
+  const lines = cp.lines;
   assertEquals(cp.lines, [
-    " \u001b[32mい\u001b[39m",
-    "\u001b[31mあ\u001b[39m ",
+    " \u001b[32mい\u001b[0m",
+    "\u001b[31mあ \u001b[0m",
   ]);
+});
+
+Deno.test("Two ansi chars of same style", () => {
+  const cp = new CharPlot();
+  cp.insert(0, 0, "A", "\u001b[31m");
+  cp.insert(1, 0, "B", "\u001b[31m");
+  assertEquals(cp.lines, ["\u001b[31mAB\u001b[0m"]);
+});
+
+Deno.test("Two adjacent chars with different styles", () => {
+  const cp = new CharPlot();
+  cp.insert(0, 0, "A", "\u001b[31m");
+  cp.insert(1, 0, "B", "\u001b[32m");
+  assertEquals(cp.lines, ["\u001b[31mA\u001b[32mB\u001b[0m"]);
+});
+
+Deno.test("Two adjacent chars with different styles and a blank char in between", () => {
+  const cp = new CharPlot();
+  cp.insert(0, 0, "A", "\u001b[31m");
+  cp.insert(2, 0, "B", "\u001b[32m");
+  assertEquals(cp.lines, ["\u001b[31mA \u001b[32mB\u001b[0m"]);
+});
+
+Deno.test("ANSI style reset after styled char", () => {
+  const cp = new CharPlot();
+  cp.insert(0, 0, "A", "\u001b[31m");
+  cp.insert(1, 0, "B");
+  assertEquals(cp.lines, ["\u001b[31mA\u001b[0mB"]);
+});
+
+Deno.test("ANSI style reset at end of line", () => {
+  const cp = new CharPlot();
+  cp.insert(0, 0, "A", "\u001b[31m");
+  assertEquals(cp.lines, ["\u001b[31mA\u001b[0m"]);
+});
+
+Deno.test("Invalid ANSI code with visible chars", () => {
+  const cp = new CharPlot();
+  assertThrows(
+    () => cp.insert(0, 0, "A", "\u001b[31mHello\u001b[0m"),
+    Error,
+  );
 });
