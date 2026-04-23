@@ -106,3 +106,28 @@ Deno.test("Uneven Series Lengths", () => {
     "All series must have the same length",
   );
 });
+
+Deno.test("Swap foreground and background colors", () => {
+  const chart = linechart([1, 2, 3], 3, 10, "\x1b[7m");
+  const lines: string[] = chart.split("\n");
+  assertEquals(lines, [
+    "3├ \x1b[7m╭\x1b[0m",
+    "2├\x1b[7m╭╯\x1b[0m",
+    "1├\x1b[7m╯ \x1b[0m",
+  ]);
+});
+
+Deno.test("Green line and red line", () => {
+  const chart = linechart(
+    [[1, 2, 3], [3, 2, 1]],
+    3,
+    undefined,
+    ["\x1b[32m", "\x1b[31m"],
+  );
+  const lines: string[] = chart.split("\n");
+  assertEquals(lines, [
+    "3├\x1b[31m╮\x1b[32m╭\x1b[0m",
+    "2├\x1b[31m╰╮\x1b[0m",
+    "1├\x1b[32m╯\x1b[31m╰\x1b[0m",
+  ]);
+});
