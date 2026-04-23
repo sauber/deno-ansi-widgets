@@ -1,5 +1,6 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { linechart } from "./linechart.ts";
+import { assert } from "node:console";
 
 Deno.test("Empty", () => {
   const chart = linechart([], 4);
@@ -72,4 +73,36 @@ Deno.test("Straight Line", () => {
   const data = [0, 0];
   const chart = linechart(data, 3, 10);
   assertEquals(chart, "0├────────");
+});
+
+Deno.test("Two Lines", () => {
+  const chart = linechart([[1, 2, 3, 4, 5], [5, 4, 3, 2, 1]], 5, 20);
+  const lines: string[] = chart.split("\n");
+  assertEquals(lines, ["5├╮  ╭", "4├╰╮╭╯", "3├ ╰╮ ", "2├╭╯╰╮", "1├╯  ╰"]);
+});
+
+Deno.test("Three Lines", () => {
+  const chart = linechart(
+    [[2, 2, 2, 2, 2], [1, 2, 3, 4, 5], [3, 4, 5, 4, 3]],
+    5,
+    20,
+  );
+  const lines: string[] = chart.split("\n");
+  assertEquals(lines, [
+    "5├ ╭╮╭",
+    "4├╭╯╰╮",
+    "3├╯╭╯╰",
+    "2├╭╯──",
+    "1├╯   ",
+  ]);
+});
+
+Deno.test("Uneven Series Lengths", () => {
+  assertThrows(
+    () => {
+      linechart([[1, 2, 3], [4, 5]], 4);
+    },
+    Error,
+    "All series must have the same length",
+  );
 });

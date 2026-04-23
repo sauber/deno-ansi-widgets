@@ -5,19 +5,40 @@ import { alignNumbers } from "../utils/align.ts";
 
 /** Create a terminal printable line chart from an array of numbers */
 export function linechart(
-  data: number[],
+  values: number[] | number[][],
   height: number,
   width?: number,
 ): string {
-  // Empty chart
-  if (data.length === 0) return "";
+  // Handle empty input
+  if (values.length === 0) return "";
 
-  const min = Math.min(...data);
-  const max = Math.max(...data);
+  // Determine if input is multiple series (2D array) or single series (1D array)
+  let seriesArray: number[][];
+  const firstElement = values[0];
+  if (Array.isArray(firstElement)) {
+    // Input is a 2D array (multiple series)
+    seriesArray = values as number[][];
+  } else {
+    // Input is a 1D array (single series), wrap in array
+    seriesArray = [values as number[]];
+  }
 
-  // Display straight line if no variation in values
+  // Validate that all series have the same length
+  const length = seriesArray[0].length;
+  for (const series of seriesArray) {
+    if (series.length !== length) {
+      throw new Error("All series must have the same length");
+    }
+  }
+
+  // Compute global min and max across all values
+  const flat = seriesArray.flat();
+  const min = Math.min(...flat);
+  const max = Math.max(...flat);
+
+  // Early return for straight line(s)
   if (min === max) {
-    const label = String(data[0]);
+    const label = String(seriesArray[0][0]);
     return `${label}├${"─".repeat(width ? width - label.length - 1 : 0)}`;
   }
 
@@ -26,53 +47,67 @@ export function linechart(
   // y axis numeric labels
   const yLabels: number[] = scale(min, max, height);
 
-  // Convert numeric labels to right adjusted text labels, highest label first
+  // Convert numeric labels to aligned number labels, highest label first
   const yTextLabels: string[] = alignNumbers(yLabels).reverse();
 
   // Set width for y axis labels to width of longest label
   const yLabelWidth: number = yTextLabels[0].length;
 
-  // Downsample data to fit width
-  const downsampled = width ? downsample(data, width - yLabelWidth) : data;
+  // Determine base width per series (including space for label)
+  const baseWidth = width ? width - yLabelWidth : length;
 
-  // Rectangular text area for holding chart characters
-  const textmap: CharPlot = new CharPlot();
+  // Textmap for holding chart symbols, indexed by (x, y) coordinates
+  const textmap = new CharPlot();
 
-  // Insert Y Axis symbols
-  for (let y = 0; y < height; y++) textmap.insert(0, y, "├");
+  // Insert Y axis border at column 0
+  for (let y = 0; y < height; y++) {
+    textmap.insert(0, y, "├");
+  }
 
-  // Convert data values to y indices
-  const stepSize: number = yLabels[1] - yLabels[0];
-  const line: number[] = downsampled.map((value) =>
-    Math.round((value - yLabels[0]) / stepSize)
-  );
+  // Compute step size for mapping values to y indices
+  const stepSize = yLabels[1] - yLabels[0];
 
-  // Plot data points
-  for (let x = 1; x < line.length; x++) {
-    const [y1, y2] = [line[x - 1], line[x]];
-    if (y1 === y2) {
-      // Going straight
-      textmap.insert(x, y1, "─");
-    } else if (y1 < y2) {
-      // Going up
-      textmap.insert(x, y2, "╭");
-      textmap.insert(x, y1, "╯");
-    } else {
-      // Going down
-      textmap.insert(x, y1, "╮");
-      textmap.insert(x, y2, "╰");
-    }
+  // Plot each series
+  for (const series of seriesArray) {
+    // Downsample if width provided
+    const downsampled = width && width < series.length
+      ? downsample(series, baseWidth)
+      : series;
 
-    // Fill extra lines between points
-    for (let y = Math.min(y1, y2) + 1; y < Math.max(y1, y2); y++) {
-      textmap.insert(x, y, "│");
+    // Map values to y indices
+    const line = downsampled.map((value) =>
+      Math.round((value - yLabels[0]) / stepSize)
+    );
+
+    // Plot the line
+    let prevY = line[0];
+    for (let x = 1; x < line.length; x++) {
+      const currY = line[x];
+      if (prevY === currY) {
+        // Going straight
+        textmap.insert(x, currY, "─");
+      } else if (prevY < currY) {
+        // Going up
+        textmap.insert(x, currY, "╭");
+        textmap.insert(x, prevY, "╯");
+      } else {
+        // Going down
+        textmap.insert(x, prevY, "╮");
+        textmap.insert(x, currY, "╰");
+      }
+      // Fill vertical lines
+      const startY = Math.min(prevY, currY) + 1;
+      const endY = Math.max(prevY, currY);
+      for (let y = startY; y < endY; y++) {
+        textmap.insert(x, y, "│");
+      }
+      prevY = currY;
     }
   }
 
   // Combine y axis labels with chart grid
-  const chart: string = textmap.lines.map((line, i) =>
-    `${yTextLabels[i]}${line}`
-  ).join("\n");
-
+  const chart = textmap.lines.map((line, i) => `${yTextLabels[i]}${line}`).join(
+    "\n",
+  );
   return chart;
 }
