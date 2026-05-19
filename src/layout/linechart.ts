@@ -1,5 +1,5 @@
 import { scale } from "../utils/scale.ts";
-import { AnsiStyle, linechart } from "../widgets/linechart.ts";
+import { type AnsiStyle, linechart } from "../widgets/linechart.ts";
 import { Block } from "./block.ts";
 
 /** Display an array of numbers as a line chart in a block, supports multiple series and ANSI styles */

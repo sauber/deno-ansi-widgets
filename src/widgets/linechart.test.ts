@@ -1,6 +1,5 @@
 import { assertEquals, assertThrows } from "@std/assert";
 import { linechart } from "./linechart.ts";
-import { assert } from "node:console";
 
 Deno.test("Empty", () => {
   const chart = linechart([], 4);
