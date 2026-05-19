@@ -1,4 +1,4 @@
-import { CharPlot } from "../utils/charplot.ts";
+import { CharCanvas } from "@sauber/ansi-draw";
 import { scale } from "../utils/scale.ts";
 import { downsample } from "../utils/downsample.ts";
 import { alignNumbers } from "../utils/align.ts";
@@ -60,7 +60,7 @@ export function linechart(
   const baseWidth = width ? width - yLabelWidth : length;
 
   // Textmap for holding chart symbols, indexed by (x, y) coordinates
-  const textmap = new CharPlot();
+  const textmap = new CharCanvas();
 
   // Insert Y axis border at column 0
   for (let y = 0; y < height; y++) {
