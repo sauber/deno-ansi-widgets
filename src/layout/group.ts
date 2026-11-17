@@ -5,6 +5,9 @@ import { type Elements, stretch } from "../utils/stretch.ts";
 /** Alignment of multiple blocks */
 export abstract class Group extends Block {
   protected readonly blocks: Blocks;
+  /** Columns/rows shared between adjacent children when rendering */
+  protected widthOverlap = 0;
+  protected heightOverlap = 0;
 
   constructor(blocks: Blocks) {
     super();
@@ -28,7 +31,7 @@ export abstract class Group extends Block {
     const current: Elements = this.blocks.map((
       b,
     ) => [b.width, b.canSetWidth]);
-    const target: Elements = stretch(current, width);
+    const target: Elements = stretch(current, width, this.widthOverlap);
 
     // Set each block to new width
     this.blocks.forEach((b, i) => {
@@ -46,7 +49,7 @@ export abstract class Group extends Block {
     const current: Elements = this.blocks.map((
       b,
     ) => [b.height, b.canSetHeight]);
-    const target: Elements = stretch(current, height);
+    const target: Elements = stretch(current, height, this.heightOverlap);
 
     this.blocks.forEach((b, i) => {
       if (current[i][1] && target[i][0] != current[i][0]) {

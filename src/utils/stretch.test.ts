@@ -29,6 +29,19 @@ Deno.test("stretch: mixed elements, expand", () => {
   assertEquals(stretch(elements, targetSize), expected);
 });
 
+Deno.test("stretch: overlap reduces rendered size", () => {
+  const elements: Elements = [[9, true], [9, true], [9, true]];
+  assertEquals(stretch(elements, 25, 2), elements);
+  assertEquals(stretch(elements, 31, 2), [[11, true], [11, true], [11, true]]);
+  assertEquals(stretch(elements, 22, 2), [[8, true], [8, true], [8, true]]);
+});
+
+Deno.test("stretch: overlap with non-stretchable elements", () => {
+  const elements: Elements = [[10, false], [10, true]];
+  assertEquals(stretch(elements, 20, 5), [[10, false], [15, true]]);
+  assertEquals(stretch(elements, 4, 5), elements);
+});
+
 Deno.test("distribution", () => {
   assertEquals(distribute([3, 3, 3], 10), [3, 4, 3]);
   assertEquals(distribute([1, 2], 4), [1, 3]);

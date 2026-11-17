@@ -30,15 +30,22 @@ export function distribute(ratios: number[], amount: number): number[] {
  * @param elements
  * @returns elements
  */
-export function stretch(elements: Elements, targetSize: Size): Elements {
+export function stretch(
+  elements: Elements,
+  targetSize: Size,
+  overlap = 0,
+): Elements {
+  // Shared columns/rows reduce the rendered size, so aim higher
+  const target = targetSize + overlap;
+
   // Calculate the total size of non-stretchable elements
   const nonStretchableSum = elements.reduce((sum, [size, stretchable]) => {
     return sum + (stretchable ? 0 : size);
   }, 0);
 
-  // If the total size of non-stretchable elements is greater than targetSize,
+  // If the total size of non-stretchable elements is greater than target,
   // then stretching is not possible, and return the original elements.
-  if (nonStretchableSum > targetSize) return elements;
+  if (nonStretchableSum > target) return elements;
 
   // Generate the list of stretchable elements
   const stretchableElements = elements.filter(([_, stretchable]) =>
@@ -49,7 +56,7 @@ export function stretch(elements: Elements, targetSize: Size): Elements {
   if (stretchableElements.length === 0) return elements;
 
   // Calculate the remaining size to be distributed among stretchable elements
-  const remainingSize = targetSize - nonStretchableSum;
+  const remainingSize = target - nonStretchableSum;
 
   // Calculate the ratio by which stretchable elements need to be adjusted
   // const ratio = remainingSize / stretchableSum;
