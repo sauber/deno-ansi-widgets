@@ -18,7 +18,7 @@ export class Box extends Block {
   /** Create new box with different width */
   public setWidth(width: number): number {
     this.line = ansiTrunk(this.fill.repeat(width), width);
-    return this.width = ansiLength(this.line);;
+    return this.width = ansiLength(this.line);
   }
 
   /** Create new box with different height */

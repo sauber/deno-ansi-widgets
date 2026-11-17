@@ -1,5 +1,4 @@
-import { unicodeWidth } from "@std/cli/unicode-width";
-import { stripAnsiCode } from "@std/fmt/colors";
+import { ansiLength } from "../utils/ansi.ts";
 
 /** Plot chunks of strings onto another string */
 export class TextLine {
@@ -9,7 +8,7 @@ export class TextLine {
     private readonly line: string,
     private readonly fill: string = " ",
   ) {
-    this.length = unicodeWidth(stripAnsiCode(line));
+    this.length = ansiLength(line);
   }
 
   /** Create line from width and filling character */

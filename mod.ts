@@ -12,6 +12,5 @@ export * from "./src/layout/heatmap.ts";
 export * from "./src/widgets/gauges.ts";
 export * from "./src/widgets/frame.ts";
 export * from "./src/widgets/linechart.ts";
-export * from "./src/widgets/frame.ts";
 export * from "./src/widgets/progress.ts";
 export * from "./src/widgets/heatmap.ts";

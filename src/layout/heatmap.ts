@@ -3,9 +3,6 @@ import { Block } from "./block.ts";
 
 /** Display pair of data in a plot */
 export class Heatmap extends Block {
-  // public override readonly canSetHeight = false;
-  // public override readonly height = 1;
-
   constructor(
     private data: Points,
     public width: number,
