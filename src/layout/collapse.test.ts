@@ -1,6 +1,6 @@
 import { assertEquals } from "@std/assert";
 import { ansiLength } from "../utils/ansi.ts";
-import { Collapse } from "./collapse.ts";
+import { Collapse, CollapseAxis } from "./collapse.ts";
 import { Frame } from "./frame.ts";
 import { Split } from "./split.ts";
 import { Stack } from "./stack.ts";
@@ -11,17 +11,17 @@ const f = (body: string, title: string) => new Frame(new Static(body), title);
 const framed = () => [f("Body A", "Title A"), f("Body B", "Title B"), f("Body C", "Title C")];
 
 Deno.test("Collapse detects frame-like children", () => {
-  assertEquals(new Collapse(framed(), "horizontal").frameLike, true);
-  assertEquals(new Collapse([framed()[0]], "horizontal").frameLike, false);
-  assertEquals(new Collapse([f("A", "A"), new Static("other")], "vertical").frameLike, false);
+  assertEquals(new Collapse(framed(), CollapseAxis.Horizontal).frameLike, true);
+  assertEquals(new Collapse([framed()[0]], CollapseAxis.Horizontal).frameLike, false);
+  assertEquals(new Collapse([f("A", "A"), new Static("other")], CollapseAxis.Vertical).frameLike, false);
 });
 
 Deno.test("Collapse accounts for shared borders on the layout axis", () => {
-  const horizontal = new Collapse(framed(), "horizontal");
+  const horizontal = new Collapse(framed(), CollapseAxis.Horizontal);
   assertEquals(horizontal.width, 25);
   assertEquals(horizontal.height, 3);
 
-  const vertical = new Collapse(framed(), "vertical");
+  const vertical = new Collapse(framed(), CollapseAxis.Vertical);
   assertEquals(vertical.width, 9);
   assertEquals(vertical.height, 7);
 });

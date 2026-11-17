@@ -1,5 +1,5 @@
 import { Block, type Blocks } from "./block.ts";
-import { Collapse } from "./collapse.ts";
+import { Collapse, CollapseAxis } from "./collapse.ts";
 
 /** Display multiple blocks side by side */
 export class Split extends Block {
@@ -7,7 +7,7 @@ export class Split extends Block {
 
   constructor(blocks: Blocks) {
     super();
-    this.inner = new Collapse(blocks, "horizontal");
+    this.inner = new Collapse(blocks, CollapseAxis.Horizontal);
     this.canSetWidth = this.inner.canSetWidth;
     this.canSetHeight = this.inner.canSetHeight;
   }

@@ -1,5 +1,5 @@
 import { Block, type Blocks } from "./block.ts";
-import { Collapse } from "./collapse.ts";
+import { Collapse, CollapseAxis } from "./collapse.ts";
 
 /** Arrange blocks one above the other */
 export class Stack extends Block {
@@ -7,7 +7,7 @@ export class Stack extends Block {
 
   constructor(blocks: Blocks) {
     super();
-    this.inner = new Collapse(blocks, "vertical");
+    this.inner = new Collapse(blocks, CollapseAxis.Vertical);
     this.canSetWidth = this.inner.canSetWidth;
     this.canSetHeight = this.inner.canSetHeight;
   }

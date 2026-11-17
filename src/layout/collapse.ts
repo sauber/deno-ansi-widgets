@@ -3,7 +3,10 @@ import { Group } from "./group.ts";
 import { joinBorder, mergeRows } from "../utils/border.ts";
 
 /** Axis along which children are arranged */
-export type CollapseAxis = "horizontal" | "vertical";
+export enum CollapseAxis {
+  Horizontal = "horizontal",
+  Vertical = "vertical",
+}
 
 /** Compose a group of blocks, merging shared frame borders when every child
  * presents a frame-like border. Layered between a Split/Stack and its children.
@@ -19,11 +22,14 @@ export class Collapse extends Group {
     this.collapsed = collapsed;
     this.axis = axis;
     if (collapsed) {
-      if (axis === "horizontal") this.widthOverlap = this.blocks.length - 1;
-      else this.heightOverlap = this.blocks.length - 1;
+      if (axis === CollapseAxis.Horizontal) {
+        this.widthOverlap = this.blocks.length - 1;
+      } else {
+        this.heightOverlap = this.blocks.length - 1;
+      }
     }
     // Stretch children across the axis perpendicular to the layout
-    if (axis === "horizontal") this.setHeight(this.height);
+    if (axis === CollapseAxis.Horizontal) this.setHeight(this.height);
     else this.setWidth(this.width);
   }
 
@@ -34,21 +40,21 @@ export class Collapse extends Group {
 
   /** Rendered width, accounting for shared border columns */
   public override get width(): number {
-    return this.axis === "horizontal"
+    return this.axis === CollapseAxis.Horizontal
       ? super.width - this.widthOverlap
       : Math.max(0, ...this.blocks.map((b) => b.width));
   }
 
   /** Rendered height, accounting for shared border rows */
   public override get height(): number {
-    return this.axis === "vertical"
+    return this.axis === CollapseAxis.Vertical
       ? super.height - this.heightOverlap
       : Math.max(0, ...this.blocks.map((b) => b.height));
   }
 
   /** New total width of all blocks */
   public override setWidth(width: number): number {
-    if (this.axis === "vertical") {
+    if (this.axis === CollapseAxis.Vertical) {
       this.blocks.forEach((b) => b.setWidth(width));
       return this.width;
     }
@@ -57,7 +63,7 @@ export class Collapse extends Group {
 
   /** New total height of all blocks */
   public override setHeight(height: number): number {
-    if (this.axis === "horizontal") {
+    if (this.axis === CollapseAxis.Horizontal) {
       this.blocks.forEach((b) => b.setHeight(height));
       return this.height;
     }
@@ -67,7 +73,7 @@ export class Collapse extends Group {
   /** Compose child grids, merging borders on shared edges when collapsed */
   public override get lines(): string[] {
     const grid = this.blocks.map((b) => b.lines);
-    return this.axis === "horizontal"
+    return this.axis === CollapseAxis.Horizontal
       ? this.horizontal(grid)
       : this.vertical(grid);
   }
