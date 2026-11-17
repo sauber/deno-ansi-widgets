@@ -1,6 +1,6 @@
 import type { Blocks } from "./block.ts";
-import { Frame } from "./frame.ts";
 import { Group } from "./group.ts";
+import { joinBorder } from "../utils/border.ts";
 
 /** One or more blocks on top of each other with same width */
 export class Stack extends Group {
@@ -9,7 +9,7 @@ export class Stack extends Group {
   constructor(blocks: Blocks) {
     // Detect before super(): Group wraps children in Fit, hiding their types
     const collapsed = blocks.length > 1 &&
-      blocks.every((b) => b instanceof Frame);
+      blocks.every((b) => b.frameLike);
     super(blocks);
     this.collapsed = collapsed;
     if (collapsed) this.heightOverlap = this.blocks.length - 1;
@@ -21,6 +21,11 @@ export class Stack extends Group {
   /** Maximum width of all blocks */
   public override get width(): number {
     return Math.max(0, ...this.blocks.map((b) => b.width));
+  }
+
+  /** A collapsed stack presents frame-like borders to its parent */
+  public override get frameLike(): boolean {
+    return this.collapsed;
   }
 
   /** Rendered height, accounting for shared border rows */
@@ -45,10 +50,13 @@ export class Stack extends Group {
         lines.push(...child);
         continue;
       }
-      // Replace the previous bottom border with this frame's top border,
-      // turning its corners into horizontal junctions
+      // Merge this frame's top border into the previous bottom border,
+      // preserving junction glyphs from both sides
+      const bottom = lines[lines.length - 1];
       const top = child[0];
-      lines[lines.length - 1] = "├" + top.slice(1, -1) + "┤";
+      lines[lines.length - 1] = Array.from(bottom).map((glyph, i) =>
+        joinBorder(glyph, top[i] ?? glyph)
+      ).join("");
       lines.push(...child.slice(1));
     }
     return lines;

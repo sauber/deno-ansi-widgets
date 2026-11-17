@@ -38,23 +38,25 @@ const printable: string = blockify(rawData, imageCols, imageRows);
 // Create a dashboard layout with multiple widgets
 const dashboard = new Frame(
   new Stack([
-    new Frame(title, "Title"),
-    new Split([
-      new Frame(
-        new Stack([
-          new TextLine("A Picture"),
-          new Static(printable),
-        ]),
-        "🖼️",
-      ),
-      new Frame(new Box(2, 2, "♬"), "Box 2x2"),
-      new Frame(chart, "Line Chart"),
+    new Stack([
+      new Frame(title, "Title"),
+      new Split([
+        new Frame(
+          new Stack([
+            new TextLine("A Picture"),
+            new Static(printable),
+          ]),
+          "🖼️",
+        ),
+        new Frame(new Box(2, 2, "♬"), "Box 2x2"),
+        new Frame(chart, "Line Chart"),
+      ]),
+      new Split([
+        new Frame(new Static("Wrapped\ntext")),
+        new Frame(new Static("Unwrapped text")),
+      ]),
+      new Frame(gauges),
     ]),
-    new Split([
-      new Frame(new Static("Wrapped\ntext")),
-      new Frame(new Static("Unwrapped text")),
-    ]),
-    new Frame(gauges),
     progress,
   ]),
   "Example Dashboard",

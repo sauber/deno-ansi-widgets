@@ -1,6 +1,6 @@
 import type { Blocks } from "./block.ts";
-import { Frame } from "./frame.ts";
 import { Group } from "./group.ts";
+import { joinBorder } from "../utils/border.ts";
 
 /** Display multiple blocks side by side */
 export class Split extends Group {
@@ -9,7 +9,7 @@ export class Split extends Group {
   constructor(blocks: Blocks) {
     // Detect before super(): Group wraps children in Fit, hiding their types
     const collapsed = blocks.length > 1 &&
-      blocks.every((b) => b instanceof Frame);
+      blocks.every((b) => b.frameLike);
     super(blocks);
     this.collapsed = collapsed;
     if (collapsed) this.widthOverlap = this.blocks.length - 1;
@@ -21,6 +21,11 @@ export class Split extends Group {
   /** Maximum height of all blocks */
   public override get height(): number {
     return Math.max(0, ...this.blocks.map((b) => b.height));
+  }
+
+  /** A collapsed split presents frame-like borders to its parent */
+  public override get frameLike(): boolean {
+    return this.collapsed;
   }
 
   /** Rendered width, accounting for shared border columns */
@@ -43,8 +48,12 @@ export class Split extends Group {
       for (let j = 0; j < this.blocks.length; j++) {
         const line = grid[j][i] || " ".repeat(this.blocks[j].width);
         if (j > 0 && this.collapsed) {
-          const joint = i === 0 ? "┬" : i === lineCount - 1 ? "┴" : "│";
-          lines[i] = lines[i].slice(0, -1) + joint + line.slice(1);
+          const prev = lines[i];
+          const joint = joinBorder(
+            prev[prev.length - 1] ?? "",
+            line[0] ?? "",
+          );
+          lines[i] = prev.slice(0, -1) + joint + line.slice(1);
         } else {
           lines[i] += line;
         }

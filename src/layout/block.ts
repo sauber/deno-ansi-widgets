@@ -15,6 +15,11 @@ export abstract class Block {
   /** Can the height be changed */
   public canSetWidth = true;
 
+  /** Does this block present mergeable frame borders */
+  public get frameLike(): boolean {
+    return false;
+  }
+
   /** Set new width of the block */
   public abstract setWidth(width: number): number;
 

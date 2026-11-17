@@ -24,6 +24,11 @@ export class Frame extends Block {
     this.expandToTitle();
   }
 
+  /** Frames always present mergeable borders */
+  public override get frameLike(): boolean {
+    return true;
+  }
+
   /** Width of the frame */
   public override get width(): number {
     return Math.max(this.title.length, this.block.width) + 2;
