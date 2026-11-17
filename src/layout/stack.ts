@@ -1,62 +1,39 @@
-import type { Blocks } from "./block.ts";
-import { Group } from "./group.ts";
-import { mergeRows } from "../utils/border.ts";
+import { Block, type Blocks } from "./block.ts";
+import { Collapse } from "./collapse.ts";
 
-/** One or more blocks on top of each other with same width */
-export class Stack extends Group {
-  private readonly collapsed: boolean;
+/** Arrange blocks one above the other */
+export class Stack extends Block {
+  private readonly inner: Collapse;
 
   constructor(blocks: Blocks) {
-    // Detect before super(): Group wraps children in Fit, hiding their types
-    const collapsed = blocks.length > 1 &&
-      blocks.every((b) => b.frameLike);
-    super(blocks);
-    this.collapsed = collapsed;
-    if (collapsed) this.heightOverlap = this.blocks.length - 1;
-    // Adjust width of all blocks to the block with maximum width
-    const commonWidth = this.width;
-    this.setWidth(commonWidth);
+    super();
+    this.inner = new Collapse(blocks, "vertical");
+    this.canSetWidth = this.inner.canSetWidth;
+    this.canSetHeight = this.inner.canSetHeight;
   }
 
-  /** Maximum width of all blocks */
-  public override get width(): number {
-    return Math.max(0, ...this.blocks.map((b) => b.width));
-  }
-
-  /** A collapsed stack presents frame-like borders to its parent */
+  /** Collapsed children present frame-like borders to a parent */
   public override get frameLike(): boolean {
-    return this.collapsed;
+    return this.inner.frameLike;
   }
 
-  /** Rendered height, accounting for shared border rows */
+  public override get width(): number {
+    return this.inner.width;
+  }
+
   public override get height(): number {
-    return super.height - this.heightOverlap;
+    return this.inner.height;
   }
 
-  /** Set new width of each block */
   public override setWidth(width: number): number {
-    this.blocks.map((b) => b.setWidth(width));
-    return this.width;
+    return this.inner.setWidth(width);
   }
 
-  /** Concatenate lines from all blocks, merging frame borders when collapsed */
-  public get lines(): string[] {
-    const grid = this.blocks.map((b) => b.lines);
-    if (!this.collapsed) return grid.flat();
-    const lines: string[] = [];
-    for (let i = 0; i < grid.length; i++) {
-      const child = grid[i];
-      if (i === 0) {
-        lines.push(...child);
-        continue;
-      }
-      // Merge this frame's top border into the previous bottom border,
-      // aligning by display width and preserving junction glyphs
-      const bottom = lines[lines.length - 1];
-      const top = child[0];
-      lines[lines.length - 1] = mergeRows(bottom, top);
-      lines.push(...child.slice(1));
-    }
-    return lines;
+  public override setHeight(height: number): number {
+    return this.inner.setHeight(height);
+  }
+
+  public override get lines(): string[] {
+    return this.inner.lines;
   }
 }
