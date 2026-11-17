@@ -1,4 +1,5 @@
 import { assertEquals } from "@std/assert";
+import { ansiLength } from "../utils/ansi.ts";
 import { Stack } from "./stack.ts";
 import { Box } from "./box.ts";
 import { Frame } from "./frame.ts";
@@ -139,4 +140,26 @@ Deno.test("Stack collapses a split containing a collapsed stack", () => {
       "│Body H         │\n" +
       "└───────────────┘",
   );
+});
+
+Deno.test("Stack merges borders by display width with emoji titles", () => {
+  const stack = new Stack([
+    new Frame(new Static("x"), "Title"),
+    new Split([
+      new Frame(new Static("A"), "🖼️"),
+      new Frame(new Static("B"), "B"),
+    ]),
+  ]);
+  assertEquals(stack.width, 7);
+  assertEquals(
+    stack.toString(),
+    "┌Title┐\n" +
+      "│x    │\n" +
+      "├🖼️──┬B┤\n" +
+      "│A  │B│\n" +
+      "└───┴─┘",
+  );
+  for (const line of stack.lines) {
+    assertEquals(ansiLength(line), stack.width);
+  }
 });

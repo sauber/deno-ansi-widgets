@@ -1,6 +1,6 @@
 import type { Blocks } from "./block.ts";
 import { Group } from "./group.ts";
-import { joinBorder } from "../utils/border.ts";
+import { mergeRows } from "../utils/border.ts";
 
 /** One or more blocks on top of each other with same width */
 export class Stack extends Group {
@@ -51,12 +51,10 @@ export class Stack extends Group {
         continue;
       }
       // Merge this frame's top border into the previous bottom border,
-      // preserving junction glyphs from both sides
+      // aligning by display width and preserving junction glyphs
       const bottom = lines[lines.length - 1];
       const top = child[0];
-      lines[lines.length - 1] = Array.from(bottom).map((glyph, i) =>
-        joinBorder(glyph, top[i] ?? glyph)
-      ).join("");
+      lines[lines.length - 1] = mergeRows(bottom, top);
       lines.push(...child.slice(1));
     }
     return lines;
